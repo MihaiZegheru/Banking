@@ -9,6 +9,8 @@ import java.util.List;
 @NoArgsConstructor
 public final class CommandInput {
     private String command;
+    private String firstName;
+    private String lastName;
     private String email;
     private String account;
     private String currency;
