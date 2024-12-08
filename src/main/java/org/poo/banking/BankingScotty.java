@@ -28,9 +28,14 @@ public class BankingScotty {
 
     public void addAccountByIban(Account account) {
         if (ibanToAccount.containsKey(account.getIban())) {
+            // TODO: Change exception.
             throw new ClientAlreadyExists();
         }
         ibanToAccount.put(account.getIban(), account);
+    }
+
+    public Optional<Account> removeAccountByIban(String iban) {
+        return Optional.ofNullable(ibanToAccount.remove(iban));
     }
 
     public Optional<Account> getAccountByIban(String iban) {

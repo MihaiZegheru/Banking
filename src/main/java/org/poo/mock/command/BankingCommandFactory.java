@@ -43,6 +43,12 @@ public class BankingCommandFactory {
                         commandInput.getEmail(),
                         commandInput.getTimestamp());
             }
+            case "deleteAccount" -> {
+                return new DeleteAccountCommand(commandInput.getCommand(),
+                        commandInput.getAccount(),
+                        commandInput.getEmail(),
+                        commandInput.getTimestamp());
+            }
             default -> throw new BankingCommandNotImplemented(
                     "BankingCommand "
                     + commandInput.getCommand()

@@ -44,6 +44,11 @@ public class BankingManager implements BankingScottyFriend {
     }
 
     @Override
+    public Optional<Account> removeAccountByIban(String iban) {
+        return scotty.removeAccountByIban(iban);
+    }
+
+    @Override
     public Optional<Account> getAccountByIban(String iban) {
         return scotty.getAccountByIban(iban);
     }

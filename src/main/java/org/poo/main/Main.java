@@ -7,6 +7,7 @@ import org.poo.checker.Checker;
 import org.poo.checker.CheckerConstants;
 import org.poo.fileio.ObjectInput;
 import org.poo.mock.Mocker;
+import org.poo.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,6 +73,7 @@ public final class Main {
         ObjectMapper objectMapper = new ObjectMapper();
         File file = new File(CheckerConstants.TESTS_PATH + filePath1);
         ObjectInput inputData = objectMapper.readValue(file, ObjectInput.class);
+        Utils.resetRandom();
 
         ArrayNode output = Mocker.mock(inputData);
 
