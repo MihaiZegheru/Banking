@@ -25,18 +25,13 @@ public class DeleteAccountCommand extends BankingCommand {
 
     @Override
     public Optional<ObjectNode> execute() {
-        Optional<User> userResult = BankingManager.getInstance().getUserByEmail(email);
+        Optional<User> userResult = BankingManager.getInstance().getUserByFeature(email);
         if (userResult.isEmpty()) {
             // TODO: Report issue.
             return Optional.empty();
         }
         User user = userResult.get();
-        Optional<Account> accountResult = BankingManager.getInstance().removeAccountByIban(iban);
-        if (accountResult.isEmpty()) {
-            // TODO: Report issue.
-            return Optional.empty();
-        }
-        user.removeAccount(accountResult.get());
+        user.removeAccountByIban(iban);
 
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode objectNode = objectMapper.createObjectNode();

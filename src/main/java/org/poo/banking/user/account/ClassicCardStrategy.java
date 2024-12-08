@@ -6,7 +6,7 @@ public class ClassicCardStrategy extends Card implements PaymentStrategy {
     }
 
     @Override
-    public void pay(float amount) {
-
+    public void pay(double amount) {
+        owner.balance -= amount;
     }
 }

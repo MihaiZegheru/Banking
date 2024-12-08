@@ -2,10 +2,7 @@ package org.poo.mock.command;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.banking.BankingManager;
-import org.poo.banking.user.account.Account;
-import org.poo.banking.user.account.Card;
-import org.poo.banking.user.account.ClassicCardStrategy;
-import org.poo.utils.Utils;
+import org.poo.banking.user.User;
 
 import java.util.Optional;
 
@@ -21,13 +18,14 @@ public class DeleteCardCommand extends BankingCommand {
 
     @Override
     public Optional<ObjectNode> execute() {
-        Optional<Card> result = BankingManager.getInstance().removeCardByCardNumber(cardNumber);
-        if (result.isEmpty()) {
+        Optional<User> userResult = BankingManager.getInstance().getUserByFeature(cardNumber);
+        if (userResult.isEmpty()) {
             return Optional.empty();
         }
-        Card card = result.get();
-        Account account = card.getOwner();
-        account.removeCard(card);
+        User user = userResult.get();
+
+        user.removeCardByCardNumber(cardNumber);
+        BankingManager.getInstance().removeFeature(cardNumber);
         return Optional.empty();
     }
 }

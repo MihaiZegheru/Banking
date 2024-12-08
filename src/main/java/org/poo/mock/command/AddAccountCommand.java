@@ -29,7 +29,7 @@ public class AddAccountCommand extends BankingCommand {
 
     @Override
     public Optional<ObjectNode> execute() {
-        Optional<User> result = BankingManager.getInstance().getUserByEmail(email);
+        Optional<User> result = BankingManager.getInstance().getUserByFeature(email);
         if (result.isEmpty()) {
             // TODO: Report issue
             return Optional.empty();
@@ -38,15 +38,13 @@ public class AddAccountCommand extends BankingCommand {
         switch (accountType) {
             case "classic" -> {
                 Account account = new ClassicAccountStrategy(accountType, Utils.generateIBAN(),
-                        currency);
-                user.addAccount(account);
-                BankingManager.getInstance().addAccountByIban(account);
+                        currency, user);
+                user.addAccountByIban(account);
             }
             case "savings" -> {
                 Account account = new SavingsAccountStrategy(accountType, Utils.generateIBAN(),
-                        currency, interestRate);
-                user.addAccount(account);
-                BankingManager.getInstance().addAccountByIban(account);
+                        currency, interestRate, user);
+                user.addAccountByIban(account);
             }
         }
         return Optional.empty();

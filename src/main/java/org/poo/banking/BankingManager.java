@@ -1,8 +1,6 @@
 package org.poo.banking;
 
 import org.poo.banking.user.User;
-import org.poo.banking.user.account.Account;
-import org.poo.banking.user.account.Card;
 
 import java.util.*;
 
@@ -28,41 +26,21 @@ public class BankingManager implements BankingScottyFriend {
     }
 
     @Override
-    public void addUserByEmail(User user) {
-        scotty.addUserByEmail(user);
+    public void addUserByFeature(String feature, User user) {
+        scotty.addUserByFeature(feature, user);
     }
 
     @Override
-    public Optional<User> getUserByEmail(String email) {
-        return scotty.getUserByEmail(email);
+    public Optional<User> removeFeature(String feature) {
+        return scotty.removeFeature(feature);
     }
 
     @Override
-    public void addAccountByIban(Account account) {
-        scotty.addAccountByIban(account);
+    public Optional<User> getUserByFeature(String feature) {
+        return scotty.getUserByFeature(feature);
     }
 
-    @Override
-    public Optional<Account> removeAccountByIban(String iban) {
-        return scotty.removeAccountByIban(iban);
-    }
-
-    @Override
-    public Optional<Account> getAccountByIban(String iban) {
-        return scotty.getAccountByIban(iban);
-    }
-
-    @Override
-    public void addCardByCardNumber(Card card) {
-        scotty.addCardByCardNumber(card);
-    }
-
-    @Override
-    public Optional<Card> removeCardByCardNumber(String cardNumber) {
-        return scotty.removeCardByCardNumber(cardNumber);
-    }
-
-    public Collection<User> getUsers() {
+    public Set<User> getUsers() {
         return scotty.getUsers();
     }
 }

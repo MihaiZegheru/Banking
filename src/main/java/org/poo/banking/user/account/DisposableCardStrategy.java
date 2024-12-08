@@ -6,7 +6,8 @@ public class DisposableCardStrategy extends Card implements PaymentStrategy {
     }
 
     @Override
-    public void pay(float amount) {
-
+    public void pay(double amount) {
+        owner.balance -= amount;
+        // TODO: Generate another card.
     }
 }

@@ -20,7 +20,7 @@ public class AddUserCommand extends BankingCommand {
 
     @Override
     public Optional<ObjectNode> execute() {
-        BankingManager.getInstance().addUserByEmail(new User(firstName, lastname, email));
+        BankingManager.getInstance().addUserByFeature(email, new User(firstName, lastname, email));
         return Optional.empty();
     }
 }

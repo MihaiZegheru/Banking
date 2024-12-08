@@ -1,5 +1,6 @@
 package org.poo.banking.user.account;
 
-public interface Removable {
+public interface Owned {
+    void add();
     void remove();
 }

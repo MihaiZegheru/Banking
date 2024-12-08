@@ -2,6 +2,7 @@ package org.poo.mock.command;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.banking.BankingManager;
+import org.poo.banking.user.User;
 import org.poo.banking.user.account.Account;
 import org.poo.banking.user.account.Card;
 import org.poo.banking.user.account.DisposableCardStrategy;
@@ -23,15 +24,20 @@ public class CreateOneTimeCardCommand extends BankingCommand {
 
     @Override
     public Optional<ObjectNode> execute() {
-        Optional<Account> result = BankingManager.getInstance().getAccountByIban(iban);
-        if (result.isEmpty()) {
+        Optional<User> userResult = BankingManager.getInstance().getUserByFeature(email);
+        if (userResult.isEmpty()) {
+            return Optional.empty();
+        }
+        User user = userResult.get();
+
+        Optional<Account> accountResult = user.getAccountByIban(iban);
+        if (accountResult.isEmpty()) {
             // TODO: Report issue
             return Optional.empty();
         }
-        Account account = result.get();
-        Card card = new DisposableCardStrategy(Utils.generateCardNumber(), "active", account);
-        account.addCard(card);
-        BankingManager.getInstance().addCardByCardNumber(card);
+        Card card = new DisposableCardStrategy(Utils.generateCardNumber(), "active",
+                accountResult.get());
+        user.addCardByCardNumber(card);
         return Optional.empty();
     }
 }

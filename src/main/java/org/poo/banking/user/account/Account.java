@@ -2,11 +2,12 @@ package org.poo.banking.user.account;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import org.poo.banking.user.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Account {
+public abstract class Account implements Owned {
     @Getter
     protected final String type;
     @Getter
@@ -19,12 +20,14 @@ public abstract class Account {
     @Getter
     List<Card> cards = new ArrayList<>();
 
-    protected Account(String type, String iban, String currency) {
+    User owner;
+
+    protected Account(String type, String iban, String currency, User owner) {
         this.type = type;
         this.iban = iban;
         this.currency = currency;
         this.balance = 0;
-
+        this.owner = owner;
     }
 
     public void addFunds(double amount) {
@@ -37,6 +40,16 @@ public abstract class Account {
 
     public void removeCard(Card card) {
         cards.remove(card);
+    }
+
+    @Override
+    public void add() {
+
+    }
+
+    @Override
+    public void remove() {
+        cards.clear();
     }
 
 }

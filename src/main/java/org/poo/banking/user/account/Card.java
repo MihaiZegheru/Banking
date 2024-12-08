@@ -2,9 +2,8 @@ package org.poo.banking.user.account;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
-import lombok.Setter;
 
-public abstract class Card {
+public abstract class Card implements Owned {
     @Getter
     protected final String cardNumber;
     @Getter
@@ -17,5 +16,17 @@ public abstract class Card {
         this.cardNumber = cardNumber;
         this.status = status;
         this.owner = owner;
+    }
+
+    public abstract void pay(double amount);
+
+    @Override
+    public void add() {
+        owner.addCard(this);
+    }
+
+    @Override
+    public void remove() {
+        owner.removeCard(this);
     }
 }

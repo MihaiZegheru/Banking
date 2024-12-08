@@ -54,6 +54,16 @@ public class BankingCommandFactory {
                         commandInput.getCardNumber(),
                         commandInput.getTimestamp());
             }
+            case "payOnline" -> {
+                return new PayOnlineCommand(commandInput.getCommand(),
+                        commandInput.getCardNumber(),
+                        commandInput.getAmount(),
+                        commandInput.getCurrency(),
+                        commandInput.getDescription(),
+                        commandInput.getCommerciant(),
+                        commandInput.getEmail(),
+                        commandInput.getTimestamp());
+            }
             default -> throw new BankingCommandNotImplemented(
                     "BankingCommand "
                     + commandInput.getCommand()
