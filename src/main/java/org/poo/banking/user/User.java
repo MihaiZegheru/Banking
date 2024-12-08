@@ -24,7 +24,13 @@ public class User {
         accounts.add(account);
     }
 
+    /**
+     * Removes account and associated cards.
+     * @param account
+     */
     public void removeAccount(Account account) {
+        // TODO: Add check if account has no funds left.
+        account.getCards().clear();
         accounts.remove(account);
     }
 

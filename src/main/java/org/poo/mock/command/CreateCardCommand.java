@@ -3,6 +3,7 @@ package org.poo.mock.command;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.banking.BankingManager;
 import org.poo.banking.user.account.Account;
+import org.poo.banking.user.account.Card;
 import org.poo.banking.user.account.ClassicCardStrategy;
 import org.poo.utils.Utils;
 
@@ -28,7 +29,9 @@ public class CreateCardCommand extends BankingCommand {
             return Optional.empty();
         }
         Account account = result.get();
-        account.addCard(new ClassicCardStrategy(Utils.generateCardNumber(), "active"));
+        Card card = new ClassicCardStrategy(Utils.generateCardNumber(), "active", account);
+        account.addCard(card);
+        BankingManager.getInstance().addCardByCardNumber(card);
         return Optional.empty();
     }
 }

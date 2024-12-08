@@ -35,4 +35,8 @@ public abstract class Account {
         cards.add(card);
     }
 
+    public void removeCard(Card card) {
+        cards.remove(card);
+    }
+
 }

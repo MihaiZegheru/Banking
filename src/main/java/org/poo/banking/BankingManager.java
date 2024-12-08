@@ -1,9 +1,8 @@
 package org.poo.banking;
 
-import org.poo.banking.seller.Seller;
 import org.poo.banking.user.User;
-import org.poo.banking.exception.ClientAlreadyExists;
 import org.poo.banking.user.account.Account;
+import org.poo.banking.user.account.Card;
 
 import java.util.*;
 
@@ -51,6 +50,16 @@ public class BankingManager implements BankingScottyFriend {
     @Override
     public Optional<Account> getAccountByIban(String iban) {
         return scotty.getAccountByIban(iban);
+    }
+
+    @Override
+    public void addCardByCardNumber(Card card) {
+        scotty.addCardByCardNumber(card);
+    }
+
+    @Override
+    public Optional<Card> removeCardByCardNumber(String cardNumber) {
+        return scotty.removeCardByCardNumber(cardNumber);
     }
 
     public Collection<User> getUsers() {
