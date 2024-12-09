@@ -7,5 +7,5 @@ public interface PaymentStrategy {
      * @param currency
      * @return
      */
-    public double pay(double amount, String currency);
+    double pay(Account receiver, double amount, String currency);
 }

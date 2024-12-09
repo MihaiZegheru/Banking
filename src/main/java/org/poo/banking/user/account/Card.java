@@ -3,7 +3,7 @@ package org.poo.banking.user.account;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 
-public abstract class Card implements Owned {
+public abstract class Card implements PaymentStrategy, Owned, Freezable {
     @Getter
     protected final String cardNumber;
     @Getter
@@ -18,7 +18,7 @@ public abstract class Card implements Owned {
         this.owner = owner;
     }
 
-    public abstract double pay(double amount, String currency);
+//    public abstract double pay(Account receiver, double amount, String currency);
 
     @Override
     public void add() {
@@ -28,5 +28,10 @@ public abstract class Card implements Owned {
     @Override
     public void remove() {
         owner.removeCard(this);
+    }
+
+    @Override
+    public void OnFrozen() {
+        status = "frozen";
     }
 }

@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.banking.BankingManager;
 import org.poo.banking.user.User;
 import org.poo.banking.user.account.Card;
+import org.poo.banking.user.account.exception.FrozenCardException;
 import org.poo.banking.user.account.exception.InsufficientFundsException;
+import org.poo.banking.user.account.exception.MinimumBalanceReachedException;
 import org.poo.banking.user.tracking.TrackingNode;
 
 import java.util.Optional;
@@ -33,6 +35,7 @@ public class PayOnlineCommand extends BankingCommand {
 
     @Override
     public Optional<ObjectNode> execute() {
+        System.out.println(seller + " " + cardNumber);
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode objectNode = objectMapper.createObjectNode();
 
@@ -53,16 +56,17 @@ public class PayOnlineCommand extends BankingCommand {
             objectNode.put("output", outputNode);
             return Optional.ofNullable(objectNode);
         }
+        Card card = cardResult.get();
 
+        // TODO: Change to parent BankingException in order to limitate duplicate code.
         TrackingNode.TrackingNodeBuilder trackingBuilder = new TrackingNode.TrackingNodeBuilder()
                 .setTimestamp(timestamp);
-        Card card = cardResult.get();
         try {
-            double convertedPaidAmount = card.pay(amount, currency);
+            double convertedPaidAmount = card.pay(null, amount, currency);
             trackingBuilder.setAmount(convertedPaidAmount)
                     .setSeller(seller)
                     .setDescription("Card payment");
-        } catch (InsufficientFundsException e) {
+        } catch (InsufficientFundsException | MinimumBalanceReachedException | FrozenCardException e) {
             trackingBuilder.setDescription(e.getMessage());
         } finally {
             user.getFlowTracker().OnTransaction(trackingBuilder.build());

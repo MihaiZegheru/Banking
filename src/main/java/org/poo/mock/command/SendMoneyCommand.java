@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.banking.BankingManager;
 import org.poo.banking.user.User;
 import org.poo.banking.user.account.Account;
+import org.poo.banking.user.account.exception.InsufficientFundsException;
 import org.poo.banking.user.tracking.TrackingNode;
 
 import java.util.Optional;
@@ -59,15 +60,20 @@ public class SendMoneyCommand extends BankingCommand {
         }
         Account receiverAccount = receiverAccountResult.get();
 
-        senderAccount.transfer(receiverAccount, amount);
-        senderUser.getFlowTracker().OnTransaction(new TrackingNode.TrackingNodeBuilder()
-                .setAmountLiteral(amount + " " + senderAccount.getCurrency())
-                .setDescription(description)
-                .setSenderIban(iban)
-                .setReceiverIban(receiverIban)
-                .setTimestamp(timestamp)
-                .setTransferType("sent")
-                .build());
+        TrackingNode.TrackingNodeBuilder trackingBuilder = new TrackingNode.TrackingNodeBuilder()
+                .setTimestamp(timestamp);
+        try {
+            senderAccount.pay(receiverAccount, amount, senderAccount.getCurrency());
+            trackingBuilder.setAmountLiteral(amount + " " + senderAccount.getCurrency())
+                    .setDescription(description)
+                    .setSenderIban(iban)
+                    .setReceiverIban(receiverIban)
+                    .setTransferType("sent");
+        } catch (InsufficientFundsException e) {
+            trackingBuilder.setDescription(e.getMessage());
+        } finally {
+            senderUser.getFlowTracker().OnTransaction(trackingBuilder.build());
+        }
         return Optional.empty();
     }
 }

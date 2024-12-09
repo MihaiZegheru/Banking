@@ -15,4 +15,9 @@ public class SavingsAccountStrategy extends Account implements SavingStrategy {
     public void collect() {
 
     }
+
+    @Override
+    public double pay(Account receiver, double amount, String currency) {
+        return 0;
+    }
 }

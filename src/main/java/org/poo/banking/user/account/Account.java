@@ -1,17 +1,15 @@
 package org.poo.banking.user.account;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
-import org.poo.banking.BankingManager;
-import org.poo.banking.currency.ForexGenie;
+import lombok.Setter;
 import org.poo.banking.user.User;
 import org.poo.banking.user.account.exception.BalanceNotZeroException;
-import org.poo.banking.user.tracking.FlowTracker;
-import org.poo.banking.user.tracking.TrackingNode;
 
 import java.util.*;
 
-public abstract class Account implements Owned {
+public abstract class Account implements PaymentStrategy, SavingStrategy, Owned, Freezable {
     @Getter
     protected final String type;
     @Getter
@@ -24,6 +22,16 @@ public abstract class Account implements Owned {
     @Getter
     List<Card> cards = new ArrayList<>();
 
+    @Setter
+    @Getter
+    @JsonIgnore
+    protected double minBalance;
+
+    @Setter
+    protected boolean isFrozen = false;
+
+    @Getter
+    @JsonIgnore
     protected final User owner;
 
     protected Account(String type, String iban, String currency, User owner) {
@@ -32,17 +40,6 @@ public abstract class Account implements Owned {
         this.currency = currency;
         this.balance = 0;
         this.owner = owner;
-    }
-
-    // Q: Can saving accounts transfer money?
-    public void transfer(Account receiver, double amount) {
-        if (amount > balance) {
-            // TODO: report issue.
-            return;
-        }
-        ForexGenie forexGenie = BankingManager.getInstance().getForexGenie();
-        receiver.addFunds(forexGenie.queryRate(currency, receiver.currency, amount));
-        balance -= amount;
     }
 
     public void addFunds(double amount) {
@@ -69,4 +66,14 @@ public abstract class Account implements Owned {
         }
         cards.clear();
     }
+
+    @Override
+    public void OnFrozen() {
+        isFrozen = true;
+        for (Card card : cards) {
+            card.status = "frozen";
+        }
+    }
+
+    public abstract double pay(Account receiver, double amount, String currency);
 }

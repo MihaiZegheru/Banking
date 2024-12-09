@@ -4,4 +4,5 @@ public interface AccountTracker {
     void OnAccountCreated(TrackingNode trackingNode);
     void OnCardCreated(TrackingNode trackingNode);
     void OnCardDeleted(TrackingNode trackingNode);
+    void OnCardFrozen(TrackingNode trackingNode);
 }

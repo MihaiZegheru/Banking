@@ -6,6 +6,7 @@ import org.poo.banking.user.User;
 import org.poo.banking.user.account.Account;
 import org.poo.banking.user.account.Card;
 import org.poo.banking.user.account.DisposableCardStrategy;
+import org.poo.banking.user.tracking.TrackingNode;
 import org.poo.utils.Utils;
 
 import java.util.Optional;
@@ -38,6 +39,14 @@ public class CreateOneTimeCardCommand extends BankingCommand {
         Card card = new DisposableCardStrategy(Utils.generateCardNumber(), "active",
                 accountResult.get());
         user.addCardByCardNumber(card);
+
+        user.getFlowTracker().OnCardCreated(new TrackingNode.TrackingNodeBuilder()
+                .setAccount(iban)
+                .setCard(card.getCardNumber())
+                .setCardHolder(email)
+                .setDescription("New card created")
+                .setTimestamp(timestamp)
+                .build());
         return Optional.empty();
     }
 }

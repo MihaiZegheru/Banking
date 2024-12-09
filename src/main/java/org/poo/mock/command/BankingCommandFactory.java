@@ -89,6 +89,17 @@ public class BankingCommandFactory {
                         commandInput.getEmail(),
                         commandInput.getTimestamp());
             }
+            case "setMinimumBalance" -> {
+                return new SetMinimumBalanceCommand(commandInput.getCommand(),
+                        commandInput.getAmount(),
+                        commandInput.getAccount(),
+                        commandInput.getTimestamp());
+            }
+            case "checkCardStatus" -> {
+                return new CheckCardStatusCommand(commandInput.getCommand(),
+                        commandInput.getCardNumber(),
+                        commandInput.getTimestamp());
+            }
             default -> throw new BankingCommandNotImplemented(
                     "BankingCommand "
                     + commandInput.getCommand()
