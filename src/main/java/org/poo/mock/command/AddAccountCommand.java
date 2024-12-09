@@ -6,6 +6,7 @@ import org.poo.banking.user.User;
 import org.poo.banking.user.account.Account;
 import org.poo.banking.user.account.ClassicAccountStrategy;
 import org.poo.banking.user.account.SavingsAccountStrategy;
+import org.poo.banking.user.tracking.TrackingNode;
 import org.poo.utils.Utils;
 
 import java.util.Optional;
@@ -47,6 +48,10 @@ public class AddAccountCommand extends BankingCommand {
                 user.addAccountByIban(account);
             }
         }
+        user.getFlowTracker().OnAccountCreated(new TrackingNode.TrackingNodeBuilder()
+                .setDescription("New account created")
+                .setTimestamp(timestamp)
+                .build());
         return Optional.empty();
     }
 }

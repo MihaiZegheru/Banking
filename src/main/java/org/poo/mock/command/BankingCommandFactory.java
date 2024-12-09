@@ -84,6 +84,11 @@ public class BankingCommandFactory {
                         commandInput.getDescription(),
                         commandInput.getTimestamp());
             }
+            case "printTransactions" -> {
+                return new PrintTransactionsCommand(commandInput.getCommand(),
+                        commandInput.getEmail(),
+                        commandInput.getTimestamp());
+            }
             default -> throw new BankingCommandNotImplemented(
                     "BankingCommand "
                     + commandInput.getCommand()

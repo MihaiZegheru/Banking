@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.banking.BankingManager;
 import org.poo.banking.user.User;
 import org.poo.banking.user.account.Account;
+import org.poo.banking.user.tracking.TrackingNode;
 
 import java.util.Optional;
 
@@ -59,6 +60,14 @@ public class SendMoneyCommand extends BankingCommand {
         Account receiverAccount = receiverAccountResult.get();
 
         senderAccount.transfer(receiverAccount, amount);
+        senderUser.getFlowTracker().OnTransaction(new TrackingNode.TrackingNodeBuilder()
+                .setAmount(amount + " " + senderAccount.getCurrency())
+                .setDescription(description)
+                .setSenderIban(iban)
+                .setReceiverIban(receiverIban)
+                .setTimestamp(timestamp)
+                .setTransferType("sent")
+                .build());
         return Optional.empty();
     }
 }

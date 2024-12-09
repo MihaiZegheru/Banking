@@ -5,6 +5,8 @@ import lombok.Getter;
 import org.poo.banking.BankingManager;
 import org.poo.banking.currency.ForexGenie;
 import org.poo.banking.user.User;
+import org.poo.banking.user.tracking.FlowTracker;
+import org.poo.banking.user.tracking.TrackingNode;
 
 import java.util.*;
 
@@ -21,7 +23,7 @@ public abstract class Account implements Owned {
     @Getter
     List<Card> cards = new ArrayList<>();
 
-    User owner;
+    protected final User owner;
 
     protected Account(String type, String iban, String currency, User owner) {
         this.type = type;

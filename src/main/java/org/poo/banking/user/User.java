@@ -7,6 +7,7 @@ import org.poo.banking.BankingManager;
 import org.poo.banking.exception.ClientAlreadyExists;
 import org.poo.banking.user.account.Account;
 import org.poo.banking.user.account.Card;
+import org.poo.banking.user.tracking.FlowTracker;
 
 import java.util.*;
 
@@ -24,10 +25,13 @@ public class User {
     @JsonProperty("accounts")
     protected final Map<String, Account> ibanToAccount = new LinkedHashMap<>();
     protected final Map<String, Card> cardNumberToCard = new LinkedHashMap<>();
-
     @Getter
     @JsonIgnore
     protected final Map<String, String> aliases = new HashMap<>();
+    @Getter
+    @JsonIgnore
+    protected final FlowTracker flowTracker = new FlowTracker();
+
 
     public User(String firstName, String lastName, String emailAddr) {
         this.firstName = firstName;
