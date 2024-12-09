@@ -10,7 +10,6 @@ public class ForexGenie {
     private final IDGenerator idGenerator = new IDGenerator();
 
     public void addCurrency(String from, String to, double rate) {
-        System.out.println(from + to);
         if (!currencies.containsKey(from)) {
             currencies.put(from, new FXNode(from, idGenerator.next()));
             fxGraph.put(currencies.get(from), new ArrayList<>());
@@ -30,7 +29,6 @@ public class ForexGenie {
     }
 
     private double computeBellmanFord(FXNode from, FXNode to, double amount) {
-        System.out.println(amount);
         Queue<FXEdge> queue = new LinkedList<>();
         Map<FXNode, Double> distances = new HashMap<>();
         Map<FXNode, Boolean> visited = new HashMap<>();

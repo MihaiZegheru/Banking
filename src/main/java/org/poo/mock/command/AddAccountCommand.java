@@ -29,12 +29,12 @@ public class AddAccountCommand extends BankingCommand {
 
     @Override
     public Optional<ObjectNode> execute() {
-        Optional<User> result = BankingManager.getInstance().getUserByFeature(email);
-        if (result.isEmpty()) {
+        Optional<User> userResult = BankingManager.getInstance().getUserByFeature(email);
+        if (userResult.isEmpty()) {
             // TODO: Report issue
             return Optional.empty();
         }
-        User user = result.get();
+        User user = userResult.get();
         switch (accountType) {
             case "classic" -> {
                 Account account = new ClassicAccountStrategy(accountType, Utils.generateIBAN(),

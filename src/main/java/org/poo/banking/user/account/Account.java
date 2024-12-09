@@ -2,10 +2,11 @@ package org.poo.banking.user.account;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import org.poo.banking.BankingManager;
+import org.poo.banking.currency.ForexGenie;
 import org.poo.banking.user.User;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public abstract class Account implements Owned {
     @Getter
@@ -28,6 +29,17 @@ public abstract class Account implements Owned {
         this.currency = currency;
         this.balance = 0;
         this.owner = owner;
+    }
+
+    // Q: Can saving accounts transfer money?
+    public void transfer(Account receiver, double amount) {
+        if (amount > balance) {
+            // TODO: report issue.
+            return;
+        }
+        ForexGenie forexGenie = BankingManager.getInstance().getForexGenie();
+        receiver.addFunds(forexGenie.queryRate(currency, receiver.currency, amount));
+        balance -= amount;
     }
 
     public void addFunds(double amount) {

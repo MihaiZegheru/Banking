@@ -63,6 +63,8 @@ public final class Main {
         Checker.calculateScore();
     }
 
+    static int testNumber = 1;
+
     /**
      * @param filePath1 for input file
      * @param filePath2 for output file
@@ -70,6 +72,8 @@ public final class Main {
      */
     public static void action(final String filePath1,
                               final String filePath2) throws IOException {
+        System.out.println("-------TEST " + testNumber + "-------");
+        testNumber += 1;
         ObjectMapper objectMapper = new ObjectMapper();
         File file = new File(CheckerConstants.TESTS_PATH + filePath1);
         ObjectInput inputData = objectMapper.readValue(file, ObjectInput.class);

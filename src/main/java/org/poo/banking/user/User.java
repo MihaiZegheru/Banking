@@ -1,5 +1,6 @@
 package org.poo.banking.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import org.poo.banking.BankingManager;
@@ -21,8 +22,12 @@ public class User {
     // performing operations.
 
     @JsonProperty("accounts")
-    Map<String, Account> ibanToAccount = new LinkedHashMap<>();
-    Map<String, Card> cardNumberToCard = new LinkedHashMap<>();
+    protected final Map<String, Account> ibanToAccount = new LinkedHashMap<>();
+    protected final Map<String, Card> cardNumberToCard = new LinkedHashMap<>();
+
+    @Getter
+    @JsonIgnore
+    protected final Map<String, String> aliases = new HashMap<>();
 
     public User(String firstName, String lastName, String emailAddr) {
         this.firstName = firstName;
@@ -86,5 +91,17 @@ public class User {
             return Optional.empty();
         }
         return Optional.ofNullable(cardNumberToCard.get(cardNumber));
+    }
+
+    public void addAlias(String alias, String iban) {
+        aliases.put(alias, iban);
+    }
+
+    public Optional<String> removeAlias(String alias) {
+        return Optional.ofNullable(aliases.remove(alias));
+    }
+
+    public String getAlias(String alias) {
+        return aliases.get(alias);
     }
 }

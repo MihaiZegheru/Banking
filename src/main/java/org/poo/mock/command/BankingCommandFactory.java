@@ -70,6 +70,20 @@ public class BankingCommandFactory {
                         commandInput.getToCurrency(),
                         commandInput.getAmount());
             }
+            case "setAlias" -> {
+                return new SetAliasCommand(commandInput.getCommand(),
+                        commandInput.getEmail(),
+                        commandInput.getAlias(),
+                        commandInput.getAccount());
+            }
+            case "sendMoney" -> {
+                return new SendMoneyCommand(commandInput.getCommand(),
+                        commandInput.getAccount(),
+                        commandInput.getAmount(),
+                        commandInput.getReceiver(),
+                        commandInput.getDescription(),
+                        commandInput.getTimestamp());
+            }
             default -> throw new BankingCommandNotImplemented(
                     "BankingCommand "
                     + commandInput.getCommand()
