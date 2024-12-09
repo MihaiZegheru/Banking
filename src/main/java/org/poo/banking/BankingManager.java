@@ -1,5 +1,7 @@
 package org.poo.banking;
 
+import lombok.Getter;
+import org.poo.banking.currency.ForexGenie;
 import org.poo.banking.user.User;
 
 import java.util.*;
@@ -7,7 +9,9 @@ import java.util.*;
 public class BankingManager implements BankingScottyFriend {
     private static BankingManager instance;
 
-    private BankingScotty scotty = new BankingScotty();
+    private final BankingScotty scotty = new BankingScotty();
+    @Getter
+    private final ForexGenie forexGenie = new ForexGenie();
 
     public static BankingManager getInstance() {
         if (instance == null) {

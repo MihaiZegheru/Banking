@@ -64,6 +64,12 @@ public class BankingCommandFactory {
                         commandInput.getEmail(),
                         commandInput.getTimestamp());
             }
+            case "addCurrency" -> {
+                return new AddCurrencyCommand(commandInput.getCommand(),
+                        commandInput.getFromCurrency(),
+                        commandInput.getToCurrency(),
+                        commandInput.getAmount());
+            }
             default -> throw new BankingCommandNotImplemented(
                     "BankingCommand "
                     + commandInput.getCommand()

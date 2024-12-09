@@ -28,4 +28,6 @@ public final class CommandInput {
     private String accountType;
     private double interestRate;
     private List<String> accounts;
+    private String fromCurrency;
+    private String toCurrency;
 }

@@ -1,5 +1,6 @@
 package org.poo.mock.command;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.banking.BankingManager;
 import org.poo.banking.user.User;
@@ -30,6 +31,9 @@ public class PayOnlineCommand extends BankingCommand {
 
     @Override
     public Optional<ObjectNode> execute() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode objectNode = objectMapper.createObjectNode();
+
         Optional<User> userResult = BankingManager.getInstance().getUserByFeature(email);
         if (userResult.isEmpty()) {
             return Optional.empty();
@@ -38,10 +42,17 @@ public class PayOnlineCommand extends BankingCommand {
 
         Optional<Card> cardResult = user.getCardByCardNumber(cardNumber);
         if (cardResult.isEmpty()) {
-            return Optional.empty();
+            ObjectNode outputNode = objectMapper.createObjectNode();
+            outputNode.put("description", "Card not found");
+            outputNode.put("timestamp", timestamp);
+
+            objectNode.put("command", command);
+            objectNode.put("timestamp", timestamp);
+            objectNode.put("output", outputNode);
+            return Optional.ofNullable(objectNode);
         }
         Card card = cardResult.get();;
-        card.pay(amount);
+        card.pay(amount, currency);
         return Optional.empty();
     }
 }

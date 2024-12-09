@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.banking.BankingManager;
 import org.poo.banking.user.User;
 import org.poo.fileio.CommandInput;
+import org.poo.fileio.ExchangeInput;
 import org.poo.fileio.ObjectInput;
 import org.poo.fileio.UserInput;
 import org.poo.mock.command.BankingCommand;
@@ -20,11 +21,34 @@ public final class Mocker {
         BankingManager bankingManager = BankingManager.getInstance();
 
         // TODO: Add lombok getters everywhere.
+        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         populateUsers(testingInput.getUsers());
+        populateCurrencies(testingInput.getExchangeRates());
         ArrayNode arrayNode = runCommands(testingInput.getCommands());
 
         bankingManager.resetInstance();
         return arrayNode;
+    }
+
+    private static void populateCurrencies(final ExchangeInput[] testingFX) {
+        BankingQuerent bankingQuerent = new BankingQuerent();
+
+        for (ExchangeInput fx : testingFX) {
+            CommandInput command = new CommandInput();
+            command.setCommand("addCurrency");
+            command.setFromCurrency(fx.getFrom());
+            command.setToCurrency(fx.getTo());
+            command.setAmount(fx.getRate());
+
+            BankingCommand bankingCommand;
+            try {
+                bankingCommand = BankingCommandFactory.createBankingCommand(command);
+            } catch (BankingCommandNotImplemented e) {
+                System.out.println(e.getMessage());
+                continue;
+            }
+            bankingQuerent.query(bankingCommand);
+        }
     }
 
     private static void populateUsers(final UserInput[] testingUsers) {
