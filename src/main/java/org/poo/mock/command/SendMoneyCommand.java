@@ -61,7 +61,7 @@ public class SendMoneyCommand extends BankingCommand {
 
         senderAccount.transfer(receiverAccount, amount);
         senderUser.getFlowTracker().OnTransaction(new TrackingNode.TrackingNodeBuilder()
-                .setAmount(amount + " " + senderAccount.getCurrency())
+                .setAmountLiteral(amount + " " + senderAccount.getCurrency())
                 .setDescription(description)
                 .setSenderIban(iban)
                 .setReceiverIban(receiverIban)

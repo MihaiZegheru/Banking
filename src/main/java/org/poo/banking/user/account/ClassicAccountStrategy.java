@@ -8,7 +8,7 @@ public class ClassicAccountStrategy extends Account implements PaymentStrategy {
     }
 
     @Override
-    public void pay(double amount, String currency) {
-
+    public double pay(double amount, String currency) {
+        return amount;
     }
 }

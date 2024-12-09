@@ -7,6 +7,7 @@ import org.poo.banking.BankingManager;
 import org.poo.banking.exception.ClientAlreadyExists;
 import org.poo.banking.user.account.Account;
 import org.poo.banking.user.account.Card;
+import org.poo.banking.user.account.exception.BalanceNotZeroException;
 import org.poo.banking.user.tracking.FlowTracker;
 
 import java.util.*;
@@ -56,7 +57,7 @@ public class User {
      * Removes account and associated cards.
      * @param iban
      */
-    public Optional<Account> removeAccountByIban(String iban) {
+    public Optional<Account> removeAccountByIban(String iban) throws BalanceNotZeroException {
         if (!ibanToAccount.containsKey(iban)) {
             return Optional.empty();
         }

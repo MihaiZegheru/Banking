@@ -16,6 +16,16 @@ public class FlowTracker implements AccountTracker, TransactionTracker {
     }
 
     @Override
+    public void OnCardCreated(TrackingNode trackingNode) {
+        history.add(trackingNode);
+    }
+
+    @Override
+    public void OnCardDeleted(TrackingNode trackingNode) {
+        history.add(trackingNode);
+    }
+
+    @Override
     public void OnTransaction(TrackingNode trackingNode) {
         history.add(trackingNode);
     }

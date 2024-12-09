@@ -1,28 +1,35 @@
 package org.poo.banking.user.tracking;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 
 @Getter
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonSerialize(using = TrackingNodeSerializer.class, as=TrackingNode.class)
 public class TrackingNode {
     private final Integer timestamp;
     private final String description;
-    @JsonProperty("senderIBAN")
     private final String senderIban;
-    @JsonProperty("receiverIBAN")
     private final String receiverIban;
-    private final String amount;
+    private final String amountLiteral;
+    private final Double amount;
     private final String transferType;
+    private final String account;
+    private final String card;
+    private final String cardHolder;
+    private final String seller;
 
     public TrackingNode(TrackingNodeBuilder builder) {
         this.timestamp = builder.timestamp;
         this.description = builder.description;
         this.senderIban = builder.senderIban;
         this.receiverIban = builder.receiverIban;
+        this.amountLiteral = builder.amountLiteral;
         this.amount = builder.amount;
         this.transferType = builder.transferType;
+        this.account = builder.account;
+        this.card = builder.card;
+        this.cardHolder = builder.cardHolder;
+        this.seller = builder.seller;
     }
 
     public static class TrackingNodeBuilder {
@@ -30,8 +37,13 @@ public class TrackingNode {
         private String description;
         private String senderIban;
         private String receiverIban;
-        private String amount;
+        private String amountLiteral;
+        private Double amount;
         private String transferType;
+        private String account;
+        private String card;
+        private String cardHolder;
+        private String seller;
 
         public TrackingNodeBuilder setTimestamp(Integer timestamp) {
             this.timestamp = timestamp;
@@ -53,13 +65,38 @@ public class TrackingNode {
             return this;
         }
 
-        public TrackingNodeBuilder setAmount(String amount) {
+        public TrackingNodeBuilder setAmountLiteral(String amountLiteral) {
+            this.amountLiteral = amountLiteral;
+            return this;
+        }
+
+        public TrackingNodeBuilder setAmount(double amount) {
             this.amount = amount;
             return this;
         }
 
         public TrackingNodeBuilder setTransferType(String transferType) {
             this.transferType = transferType;
+            return this;
+        }
+
+        public TrackingNodeBuilder setAccount(String account) {
+            this.account = account;
+            return this;
+        }
+
+        public TrackingNodeBuilder setCard(String card) {
+            this.card = card;
+            return this;
+        }
+
+        public TrackingNodeBuilder setCardHolder(String cardHolder) {
+            this.cardHolder = cardHolder;
+            return this;
+        }
+
+        public TrackingNodeBuilder setSeller(String seller) {
+            this.seller = seller;
             return this;
         }
 

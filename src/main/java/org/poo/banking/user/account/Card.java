@@ -18,7 +18,7 @@ public abstract class Card implements Owned {
         this.owner = owner;
     }
 
-    public abstract void pay(double amount, String currency);
+    public abstract double pay(double amount, String currency);
 
     @Override
     public void add() {

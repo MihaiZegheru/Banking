@@ -7,6 +7,8 @@ import org.poo.banking.user.User;
 import org.poo.banking.user.account.Account;
 import org.poo.banking.user.account.ClassicAccountStrategy;
 import org.poo.banking.user.account.SavingsAccountStrategy;
+import org.poo.banking.user.account.exception.BalanceNotZeroException;
+import org.poo.banking.user.tracking.TrackingNode;
 import org.poo.utils.Utils;
 
 import java.util.Optional;
@@ -31,18 +33,23 @@ public class DeleteAccountCommand extends BankingCommand {
             return Optional.empty();
         }
         User user = userResult.get();
-        user.removeAccountByIban(iban);
 
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode objectNode = objectMapper.createObjectNode();
         ObjectNode outputNode = objectMapper.createObjectNode();
-        outputNode.put("success", "Account deleted");
-        outputNode.put("timestamp", timestamp);
-
         objectNode.put("command", command);
         objectNode.put("timestamp", timestamp);
-        objectNode.put("output", outputNode);
 
+        try {
+            user.removeAccountByIban(iban);
+            outputNode.put("success", "Account deleted");
+            outputNode.put("timestamp", timestamp);
+        } catch (BalanceNotZeroException e) {
+            outputNode.put("error", e.getMessage());
+            outputNode.put("timestamp", timestamp);
+        } finally {
+            objectNode.put("output", outputNode);
+        }
         return Optional.of(objectNode);
     }
 }
