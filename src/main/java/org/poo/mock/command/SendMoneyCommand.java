@@ -2,6 +2,8 @@ package org.poo.mock.command;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.banking.BankingManager;
+import org.poo.banking.transaction.PaymentCollectee;
+import org.poo.banking.transaction.Transaction;
 import org.poo.banking.user.User;
 import org.poo.banking.user.account.Account;
 import org.poo.banking.user.account.exception.InsufficientFundsException;
@@ -62,8 +64,10 @@ public class SendMoneyCommand extends BankingCommand {
 
         TrackingNode.TrackingNodeBuilder trackingBuilder = new TrackingNode.TrackingNodeBuilder()
                 .setTimestamp(timestamp);
+
+        Transaction transaction = new Transaction(senderAccount, receiverAccount, amount, senderAccount.getCurrency());
         try {
-            senderAccount.pay(receiverAccount, amount, senderAccount.getCurrency());
+            transaction.collect();
             trackingBuilder.setAmountLiteral(amount + " " + senderAccount.getCurrency())
                     .setDescription(description)
                     .setSenderIban(iban)

@@ -2,8 +2,9 @@ package org.poo.banking.user.account;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
+import org.poo.banking.transaction.PaymentCollectee;
 
-public abstract class Card implements PaymentStrategy, Owned, Freezable {
+public abstract class Card implements Owned, Freezable, PaymentCollectee {
     @Getter
     protected final String cardNumber;
     @Getter

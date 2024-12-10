@@ -3,6 +3,10 @@ package org.poo.mock.command;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.banking.BankingManager;
+import org.poo.banking.currency.ForexGenie;
+import org.poo.banking.transaction.PaymentReceiver;
+import org.poo.banking.transaction.Transaction;
+import org.poo.banking.transaction.ZeroPaymentReceiver;
 import org.poo.banking.user.User;
 import org.poo.banking.user.account.Card;
 import org.poo.banking.user.account.exception.FrozenCardException;
@@ -35,7 +39,6 @@ public class PayOnlineCommand extends BankingCommand {
 
     @Override
     public Optional<ObjectNode> execute() {
-        System.out.println(seller + " " + cardNumber);
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode objectNode = objectMapper.createObjectNode();
 
@@ -61,8 +64,11 @@ public class PayOnlineCommand extends BankingCommand {
         // TODO: Change to parent BankingException in order to limitate duplicate code.
         TrackingNode.TrackingNodeBuilder trackingBuilder = new TrackingNode.TrackingNodeBuilder()
                 .setTimestamp(timestamp);
+        Transaction transaction = new Transaction(card, new ZeroPaymentReceiver(), amount, currency);
         try {
-            double convertedPaidAmount = card.pay(null, amount, currency);
+            transaction.collect();
+            ForexGenie forexGenie = BankingManager.getInstance().getForexGenie();
+            double convertedPaidAmount = forexGenie.queryRate(currency, card.getOwner().getCurrency(), amount);
             trackingBuilder.setAmount(convertedPaidAmount)
                     .setSeller(seller)
                     .setDescription("Card payment");

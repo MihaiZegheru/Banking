@@ -11,15 +11,20 @@ public class ClassicAccountStrategy extends Account {
     }
 
     @Override
-    public double pay(Account receiver, double amount, String currency) throws InsufficientFundsException {
+    public void ask(double amount, String currency) throws InsufficientFundsException {
+        ForexGenie forexGenie = BankingManager.getInstance().getForexGenie();
+        amount = forexGenie.queryRate(currency, this.currency, amount);
         if (amount > balance) {
             throw new InsufficientFundsException("Insufficient funds");
         }
-        ForexGenie forexGenie = BankingManager.getInstance().getForexGenie();
         balance -= amount;
-        amount = forexGenie.queryRate(currency, receiver.currency, amount);
-        receiver.addFunds(amount);
-        return amount;
+    }
+
+    @Override
+    public void receive(double amount, String currency) {
+        ForexGenie forexGenie = BankingManager.getInstance().getForexGenie();
+        amount = forexGenie.queryRate(currency, this.currency, amount);
+        balance += amount;
     }
 
     @Override

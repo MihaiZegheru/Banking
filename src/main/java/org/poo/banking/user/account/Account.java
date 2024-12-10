@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import org.poo.banking.transaction.PaymentCollectee;
+import org.poo.banking.transaction.PaymentReceiver;
 import org.poo.banking.user.User;
 import org.poo.banking.user.account.exception.BalanceNotZeroException;
 
 import java.util.*;
 
-public abstract class Account implements PaymentStrategy, SavingStrategy, Owned, Freezable {
+public abstract class Account implements SavingStrategy, Owned, Freezable, PaymentCollectee, PaymentReceiver {
     @Getter
     protected final String type;
     @Getter
@@ -18,6 +20,7 @@ public abstract class Account implements PaymentStrategy, SavingStrategy, Owned,
     @Getter
     protected String currency;
     @Getter
+    @Setter
     protected double balance;
     @Getter
     List<Card> cards = new ArrayList<>();
@@ -74,6 +77,4 @@ public abstract class Account implements PaymentStrategy, SavingStrategy, Owned,
             card.status = "frozen";
         }
     }
-
-    public abstract double pay(Account receiver, double amount, String currency);
 }

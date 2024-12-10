@@ -1,9 +1,9 @@
 package org.poo.banking.user.account;
 
 import org.poo.banking.BankingManager;
+import org.poo.banking.currency.ForexGenie;
 import org.poo.banking.user.account.exception.FrozenCardException;
 import org.poo.banking.user.account.exception.InsufficientFundsException;
-import org.poo.banking.user.account.exception.MinimumBalanceReachedException;
 import org.poo.fileio.CommandInput;
 import org.poo.mock.command.BankingCommand;
 import org.poo.mock.command.BankingCommandFactory;
@@ -12,24 +12,22 @@ import org.poo.mock.command.exception.BankingCommandNotImplemented;
 
 import java.util.Objects;
 
-public class DisposableCardStrategy extends Card implements PaymentStrategy {
+public class DisposableCardStrategy extends Card {
     public DisposableCardStrategy(String cardNumber, String status, Account owner) {
         super(cardNumber, status, owner);
     }
 
     @Override
-    public double pay(Account receiver, double amount, String currency) throws InsufficientFundsException,
-            MinimumBalanceReachedException, FrozenCardException {
-        amount = BankingManager.getInstance().getForexGenie().queryRate(currency, owner.currency,
-                amount);
-        if (Objects.equals(status, "Frozen")) {
+    public void ask(double amount, String currency) throws InsufficientFundsException {
+        ForexGenie forexGenie = BankingManager.getInstance().getForexGenie();
+        amount = forexGenie.queryRate(currency, owner.getCurrency(), amount);
+        if (Objects.equals(status, "frozen")) {
             throw new FrozenCardException("The card is frozen");
         }
-        if (owner.balance - amount <= owner.minBalance) {
-            throw new MinimumBalanceReachedException("You have reached the minimum amount of funds, the card will be frozen");
+        if (amount > owner.getBalance()) {
+            throw new InsufficientFundsException("Insufficient funds");
         }
-        owner.balance -= amount;
-
+        owner.setBalance(owner.getBalance() - amount);
 
         BankingQuerent bankingQuerent = new BankingQuerent();
         CommandInput command = new CommandInput();
@@ -43,10 +41,8 @@ public class DisposableCardStrategy extends Card implements PaymentStrategy {
             bankingCommand = BankingCommandFactory.createBankingCommand(command);
         } catch (BankingCommandNotImplemented e) {
             System.out.println(e.getMessage());
-            return amount;
+            return;
         }
         bankingQuerent.query(bankingCommand);
-
-        return amount;
     }
 }

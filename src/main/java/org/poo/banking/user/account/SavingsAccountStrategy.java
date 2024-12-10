@@ -1,8 +1,10 @@
 package org.poo.banking.user.account;
 
+import org.poo.banking.BankingManager;
+import org.poo.banking.currency.ForexGenie;
 import org.poo.banking.user.User;
 
-public class SavingsAccountStrategy extends Account implements SavingStrategy {
+public class SavingsAccountStrategy extends Account {
     private double interestRate;
 
     public SavingsAccountStrategy(String type, String iban, String currency,
@@ -17,7 +19,14 @@ public class SavingsAccountStrategy extends Account implements SavingStrategy {
     }
 
     @Override
-    public double pay(Account receiver, double amount, String currency) {
-        return 0;
+    public void ask(double amount, String currency) {
+
+    }
+
+    @Override
+    public void receive(double amount, String currency) {
+        ForexGenie forexGenie = BankingManager.getInstance().getForexGenie();
+        amount = forexGenie.queryRate(currency, this.currency, amount);
+        balance += amount;
     }
 }
