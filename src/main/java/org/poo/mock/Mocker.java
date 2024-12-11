@@ -21,8 +21,7 @@ public final class Mocker {
         BankingManager bankingManager = BankingManager.getInstance();
 
         // TODO: Add lombok getters everywhere.
-        // TODO: Make accounts and cards observable as data across multiple objects should be
-        //  updated if they are deleted.
+        // TODO: Separate Jackson logic from commands by returning an output object / exception.
         populateUsers(testingInput.getUsers());
         populateCurrencies(testingInput.getExchangeRates());
         ArrayNode arrayNode = runCommands(testingInput.getCommands());

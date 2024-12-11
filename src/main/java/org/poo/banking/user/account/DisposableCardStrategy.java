@@ -11,6 +11,7 @@ import org.poo.mock.command.BankingQuerent;
 import org.poo.mock.command.exception.BankingCommandNotImplemented;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class DisposableCardStrategy extends Card {
     public DisposableCardStrategy(String cardNumber, String status, Account owner) {
@@ -28,6 +29,13 @@ public class DisposableCardStrategy extends Card {
             throw new InsufficientFundsException("Insufficient funds");
         }
         owner.setBalance(owner.getBalance() - amount);
+
+        Optional<Card> cardResult = owner.getOwner().removeCardByCardNumber(cardNumber);
+        if (cardResult.isEmpty()) {
+            // TODO: Decide if should report issue.
+            return;
+        }
+        BankingManager.getInstance().removeFeature(cardNumber);
 
         BankingQuerent bankingQuerent = new BankingQuerent();
         CommandInput command = new CommandInput();

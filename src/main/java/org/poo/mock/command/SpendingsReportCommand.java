@@ -8,14 +8,14 @@ import org.poo.banking.user.account.Account;
 
 import java.util.Optional;
 
-public class ReportCommand extends BankingCommand {
+public class SpendingsReportCommand extends BankingCommand {
     private final int startTimestamp;
     private final int endTimestamp;
     private final String iban;
     private final int timestamp;
 
-    public ReportCommand(String command, int startTimestamp, int endTimestamp, String iban,
-                         int timestamp) {
+    public SpendingsReportCommand(String command, int startTimestamp, int endTimestamp, String iban,
+                                  int timestamp) {
         super(command);
         this.startTimestamp = startTimestamp;
         this.endTimestamp = endTimestamp;
@@ -52,8 +52,11 @@ public class ReportCommand extends BankingCommand {
         outputNode.put("IBAN", iban);
         outputNode.put("balance", account.getBalance());
         outputNode.put("currency", account.getCurrency());
-        outputNode.put("transactions",
-                objectMapper.valueToTree(user.getUserTracker().generateReport(startTimestamp,
+        outputNode.put("transactions", objectMapper.valueToTree(
+                user.getUserTracker().generateSpendingsReport(startTimestamp,
+                        endTimestamp, account)));
+        outputNode.put("commerciants", objectMapper.valueToTree(
+                user.getUserTracker().generateSellersReport(startTimestamp,
                         endTimestamp, account)));
         objectNode.put("output", outputNode);
         return Optional.of(objectNode);

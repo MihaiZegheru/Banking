@@ -114,6 +114,13 @@ public class BankingCommandFactory {
                         commandInput.getAccount(),
                         commandInput.getTimestamp());
             }
+            case "spendingsReport" -> {
+                return new SpendingsReportCommand(commandInput.getCommand(),
+                        commandInput.getStartTimestamp(),
+                        commandInput.getEndTimestamp(),
+                        commandInput.getAccount(),
+                        commandInput.getTimestamp());
+            }
             default -> throw new BankingCommandNotImplemented(
                     "BankingCommand "
                     + commandInput.getCommand()
