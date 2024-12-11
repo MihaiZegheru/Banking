@@ -100,6 +100,20 @@ public class BankingCommandFactory {
                         commandInput.getCardNumber(),
                         commandInput.getTimestamp());
             }
+            case "splitPayment" -> {
+                return new SplitPaymentCommand(commandInput.getCommand(),
+                        commandInput.getAccounts(),
+                        commandInput.getAmount(),
+                        commandInput.getCurrency(),
+                        commandInput.getTimestamp());
+            }
+            case "report" -> {
+                return new ReportCommand(commandInput.getCommand(),
+                        commandInput.getStartTimestamp(),
+                        commandInput.getEndTimestamp(),
+                        commandInput.getAccount(),
+                        commandInput.getTimestamp());
+            }
             default -> throw new BankingCommandNotImplemented(
                     "BankingCommand "
                     + commandInput.getCommand()

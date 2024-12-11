@@ -46,7 +46,7 @@ public class CheckCardStatusCommand extends BankingCommand {
 
         if (card.getOwner().getBalance() <= card.getOwner().getMinBalance()) {
             card.OnFrozen();
-            user.getFlowTracker().OnCardFrozen(new TrackingNode.TrackingNodeBuilder()
+            user.getUserTracker().OnCardFrozen(new TrackingNode.TrackingNodeBuilder()
                     .setDescription("You have reached the minimum amount of funds, the card will be frozen")
                     .setTimestamp(timestamp)
                     .build());

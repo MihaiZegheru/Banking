@@ -31,7 +31,7 @@ public class PrintTransactionsCommand extends BankingCommand {
         objectNode.put("command", command);
         objectNode.put("timestamp", timestamp);
         objectNode.put("output",
-                objectMapper.valueToTree(user.getFlowTracker().getHistory()));
+                objectMapper.valueToTree(user.getUserTracker().getHistory()));
         return Optional.of(objectNode);
     }
 }

@@ -3,6 +3,7 @@ package org.poo.banking.user.account;
 import org.poo.banking.BankingManager;
 import org.poo.banking.currency.ForexGenie;
 import org.poo.banking.user.User;
+import org.poo.banking.user.account.exception.InsufficientFundsException;
 
 public class SavingsAccountStrategy extends Account {
     private double interestRate;
@@ -19,8 +20,13 @@ public class SavingsAccountStrategy extends Account {
     }
 
     @Override
-    public void ask(double amount, String currency) {
-
+    public void ask(double amount, String currency) throws InsufficientFundsException {
+        ForexGenie forexGenie = BankingManager.getInstance().getForexGenie();
+        amount = forexGenie.queryRate(currency, this.currency, amount);
+        if (amount > balance) {
+            throw new InsufficientFundsException("Insufficient funds");
+        }
+        balance -= amount;
     }
 
     @Override

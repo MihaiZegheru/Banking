@@ -5,20 +5,20 @@ import org.poo.banking.user.account.exception.InsufficientFundsException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Transaction implements PaymentCollector {
+public class TransactionTable implements PaymentCollector {
     private final List<PaymentCollectee> collectees;
     private final PaymentReceiver receiver;
     private final double amount;
     private final String currency;
 
-    public Transaction(List<PaymentCollectee> collectees, PaymentReceiver receiver, double amount, String currency) {
+    public TransactionTable(List<PaymentCollectee> collectees, PaymentReceiver receiver, double amount, String currency) {
         this.collectees = collectees;
         this.receiver = receiver;
         this.amount = amount;
         this.currency = currency;
     }
 
-    public Transaction(PaymentCollectee collectee, PaymentReceiver receiver, double amount, String currency) {
+    public TransactionTable(PaymentCollectee collectee, PaymentReceiver receiver, double amount, String currency) {
         this.collectees = new ArrayList<>();
         collectees.add(collectee);
         this.receiver = receiver;

@@ -40,7 +40,7 @@ public class CreateOneTimeCardCommand extends BankingCommand {
                 accountResult.get());
         user.addCardByCardNumber(card);
 
-        user.getFlowTracker().OnCardCreated(new TrackingNode.TrackingNodeBuilder()
+        user.getUserTracker().OnCardCreated(new TrackingNode.TrackingNodeBuilder()
                 .setAccount(iban)
                 .setCard(card.getCardNumber())
                 .setCardHolder(email)

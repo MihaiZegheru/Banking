@@ -2,6 +2,9 @@ package org.poo.banking.user.tracking;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
+import org.poo.banking.user.account.Account;
+
+import java.util.List;
 
 @Getter
 @JsonSerialize(using = TrackingNodeSerializer.class, as=TrackingNode.class)
@@ -17,6 +20,10 @@ public class TrackingNode {
     private final String card;
     private final String cardHolder;
     private final String seller;
+    private final String currency;
+    private final List<String> involvedAccounts;
+
+    private final Account producer;
 
     public TrackingNode(TrackingNodeBuilder builder) {
         this.timestamp = builder.timestamp;
@@ -30,6 +37,10 @@ public class TrackingNode {
         this.card = builder.card;
         this.cardHolder = builder.cardHolder;
         this.seller = builder.seller;
+        this.involvedAccounts = builder.involvedAccounts;
+        this.currency = builder.currency;
+
+        this.producer = builder.producer;
     }
 
     public static class TrackingNodeBuilder {
@@ -44,6 +55,10 @@ public class TrackingNode {
         private String card;
         private String cardHolder;
         private String seller;
+        private String currency;
+        private List<String> involvedAccounts;
+
+        private Account producer;
 
         public TrackingNodeBuilder setTimestamp(Integer timestamp) {
             this.timestamp = timestamp;
@@ -97,6 +112,21 @@ public class TrackingNode {
 
         public TrackingNodeBuilder setSeller(String seller) {
             this.seller = seller;
+            return this;
+        }
+
+        public TrackingNodeBuilder setCurrency(String currency) {
+            this.currency = currency;
+            return this;
+        }
+
+        public TrackingNodeBuilder setProducer(Account producer) {
+            this.producer = producer;
+            return this;
+        }
+
+        public TrackingNodeBuilder setInvolvedAccounts(List<String> involvedAccounts) {
+            this.involvedAccounts = involvedAccounts;
             return this;
         }
 

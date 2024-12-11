@@ -2,6 +2,7 @@ package org.poo.banking.user.tracking;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 import java.io.IOException;
@@ -43,6 +44,12 @@ public class TrackingNodeSerializer extends JsonSerializer<TrackingNode> {
         }
         if (trackingNode.getSeller() != null) {
             gen.writeStringField("commerciant", trackingNode.getSeller());
+        }
+        if (trackingNode.getCurrency() != null) {
+            gen.writeStringField("currency", trackingNode.getCurrency());
+        }
+        if (trackingNode.getInvolvedAccounts() != null) {
+            gen.writeObjectField("involvedAccounts", trackingNode.getInvolvedAccounts());
         }
         gen.writeEndObject();
     }

@@ -33,7 +33,7 @@ public class DeleteCardCommand extends BankingCommand {
         Card card = cardResult.get();
         BankingManager.getInstance().removeFeature(cardNumber);
 
-        user.getFlowTracker().OnCardCreated(new TrackingNode.TrackingNodeBuilder()
+        user.getUserTracker().OnCardCreated(new TrackingNode.TrackingNodeBuilder()
                 .setAccount(card.getOwner().getIban())
                 .setCard(card.getCardNumber())
                 .setCardHolder(user.getEmail())

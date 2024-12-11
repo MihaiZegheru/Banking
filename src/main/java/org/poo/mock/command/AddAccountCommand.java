@@ -36,21 +36,23 @@ public class AddAccountCommand extends BankingCommand {
             return Optional.empty();
         }
         User user = userResult.get();
+        Account account = null;
         switch (accountType) {
             case "classic" -> {
-                Account account = new ClassicAccountStrategy(accountType, Utils.generateIBAN(),
+                account = new ClassicAccountStrategy(accountType, Utils.generateIBAN(),
                         currency, user);
                 user.addAccountByIban(account);
             }
             case "savings" -> {
-                Account account = new SavingsAccountStrategy(accountType, Utils.generateIBAN(),
+                account = new SavingsAccountStrategy(accountType, Utils.generateIBAN(),
                         currency, interestRate, user);
                 user.addAccountByIban(account);
             }
         }
-        user.getFlowTracker().OnAccountCreated(new TrackingNode.TrackingNodeBuilder()
+        user.getUserTracker().OnAccountCreated(new TrackingNode.TrackingNodeBuilder()
                 .setDescription("New account created")
                 .setTimestamp(timestamp)
+                .setProducer(account)
                 .build());
         return Optional.empty();
     }

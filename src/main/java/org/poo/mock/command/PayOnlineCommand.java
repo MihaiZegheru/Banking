@@ -4,8 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.banking.BankingManager;
 import org.poo.banking.currency.ForexGenie;
-import org.poo.banking.transaction.PaymentReceiver;
-import org.poo.banking.transaction.Transaction;
+import org.poo.banking.transaction.TransactionTable;
 import org.poo.banking.transaction.ZeroPaymentReceiver;
 import org.poo.banking.user.User;
 import org.poo.banking.user.account.Card;
@@ -63,8 +62,9 @@ public class PayOnlineCommand extends BankingCommand {
 
         // TODO: Change to parent BankingException in order to limitate duplicate code.
         TrackingNode.TrackingNodeBuilder trackingBuilder = new TrackingNode.TrackingNodeBuilder()
-                .setTimestamp(timestamp);
-        Transaction transaction = new Transaction(card, new ZeroPaymentReceiver(), amount, currency);
+                .setTimestamp(timestamp)
+                .setProducer(card.getOwner());
+        TransactionTable transaction = new TransactionTable(card, new ZeroPaymentReceiver(), amount, currency);
         try {
             transaction.collect();
             ForexGenie forexGenie = BankingManager.getInstance().getForexGenie();
@@ -75,7 +75,7 @@ public class PayOnlineCommand extends BankingCommand {
         } catch (InsufficientFundsException | MinimumBalanceReachedException | FrozenCardException e) {
             trackingBuilder.setDescription(e.getMessage());
         } finally {
-            user.getFlowTracker().OnTransaction(trackingBuilder.build());
+            user.getUserTracker().OnTransaction(trackingBuilder.build());
         }
         return Optional.empty();
     }

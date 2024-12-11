@@ -1,6 +1,7 @@
 package org.poo.banking.user.tracking;
 
 import lombok.Getter;
+import org.poo.banking.user.account.Account;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +9,11 @@ import java.util.List;
 public class FlowTracker implements AccountTracker, TransactionTracker {
     @Getter
     protected final List<TrackingNode> history = new ArrayList<>();
+
+    public List<TrackingNode> generateReport(int startTimestamp, int endTimestamp, Account producer) {
+        return  history.stream().filter(node -> startTimestamp <= node.getTimestamp()
+                && node.getTimestamp() <= endTimestamp && node.getProducer() == producer).toList();
+    }
 
     @Override
     public void OnAccountCreated(TrackingNode trackingNode) {

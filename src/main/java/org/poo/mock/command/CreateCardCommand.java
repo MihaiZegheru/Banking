@@ -36,16 +36,17 @@ public class CreateCardCommand extends BankingCommand {
             // TODO: Report issue
             return Optional.empty();
         }
-        Card card = new ClassicCardStrategy(Utils.generateCardNumber(), "active",
-                accountResult.get());
+        Account account = accountResult.get();;
+        Card card = new ClassicCardStrategy(Utils.generateCardNumber(), "active", account);
         user.addCardByCardNumber(card);
 
-        user.getFlowTracker().OnCardCreated(new TrackingNode.TrackingNodeBuilder()
+        user.getUserTracker().OnCardCreated(new TrackingNode.TrackingNodeBuilder()
                 .setAccount(iban)
                 .setCard(card.getCardNumber())
                 .setCardHolder(email)
                 .setDescription("New card created")
                 .setTimestamp(timestamp)
+                .setProducer(account)
                 .build());
         return Optional.empty();
     }

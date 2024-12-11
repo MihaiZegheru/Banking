@@ -31,8 +31,7 @@ public class User {
     protected final Map<String, String> aliases = new HashMap<>();
     @Getter
     @JsonIgnore
-    protected final FlowTracker flowTracker = new FlowTracker();
-
+    protected final FlowTracker userTracker = new FlowTracker();
 
     public User(String firstName, String lastName, String emailAddr) {
         this.firstName = firstName;
