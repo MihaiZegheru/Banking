@@ -3,10 +3,11 @@ package org.poo.banking.user.account;
 import org.poo.banking.BankingManager;
 import org.poo.banking.currency.ForexGenie;
 import org.poo.banking.user.User;
+import org.poo.banking.user.account.exception.AccountIsNotSavingsAccount;
 import org.poo.banking.user.account.exception.InsufficientFundsException;
 
-public class ClassicAccountStrategy extends Account {
-    public ClassicAccountStrategy(String type, String iban, String currency, User owner) {
+public class ClassicAccount extends Account {
+    public ClassicAccount(String type, String iban, String currency, User owner) {
         super(type, iban, currency, owner);
     }
 
@@ -28,7 +29,19 @@ public class ClassicAccountStrategy extends Account {
     }
 
     @Override
-    public void collect() {
+    public void collect() throws AccountIsNotSavingsAccount {
+        throw new AccountIsNotSavingsAccount("This is not a savings account");
+    }
 
+    @Override
+    public void setInterestRate(double interestRate) throws AccountIsNotSavingsAccount {
+        throw new AccountIsNotSavingsAccount("This is not a savings account");
+    }
+
+    @Override
+    public void giveBack(double amount, String currency) {
+        ForexGenie forexGenie = BankingManager.getInstance().getForexGenie();
+        amount = forexGenie.queryRate(currency, this.currency, amount);
+        balance += amount;
     }
 }

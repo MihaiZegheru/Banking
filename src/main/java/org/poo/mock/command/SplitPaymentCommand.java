@@ -32,8 +32,9 @@ public class SplitPaymentCommand extends BankingCommand {
 
     @Override
     public Optional<ObjectNode> execute() {
-        List<User> users = new ArrayList<>();
+        BankingManager.getInstance().setTime(timestamp);
         List<PaymentCollectee> collecteeAccounts = new ArrayList<>();
+        List<Account> accounts = new ArrayList<>();
         for (String iban : ibans) {
             Optional<User> senderUserResult = BankingManager.getInstance().getUserByFeature(iban);
             if (senderUserResult.isEmpty()) {
@@ -47,28 +48,28 @@ public class SplitPaymentCommand extends BankingCommand {
                 return Optional.empty();
             }
             collecteeAccounts.add(senderAccountResult.get());
-            users.add(senderUser);
+            accounts.add(senderAccountResult.get());
         }
 
+        // TODO: Remove rounding
+        DecimalFormat f = new DecimalFormat("##.00");
         TrackingNode.TrackingNodeBuilder trackingBuilder = new TrackingNode.TrackingNodeBuilder()
-                .setTimestamp(timestamp);
+                .setTimestamp(timestamp).setAmount(amount / collecteeAccounts.size())
+                .setCurrency(currency)
+                .setInvolvedAccounts(ibans)
+                .setDescription("Split payment of " + f.format(amount) + " " + currency);
 
         TransactionTable transaction = new TransactionTable(collecteeAccounts, new ZeroPaymentReceiver(),
                 amount, currency);
         try {
             transaction.collect();
-            // TODO: Remove rounding
-            DecimalFormat f = new DecimalFormat("##.00");
-            // TODO: Add tracking for account.
-            trackingBuilder.setAmount(amount / collecteeAccounts.size())
-                    .setCurrency(currency)
-                    .setDescription("Split payment of " + f.format(amount) + " " + currency)
-                    .setInvolvedAccounts(ibans);
         } catch (InsufficientFundsException e) {
-            trackingBuilder.setDescription(e.getMessage());
+            trackingBuilder.setError(e.getMessage());
         } finally {
-            for (User user : users) {
-                user.getUserTracker().OnTransaction(trackingBuilder.build());
+            for (Account account : accounts) {
+                account.getOwner().getUserTracker().OnTransaction(trackingBuilder
+                        .setProducer(account)
+                        .build());
             }
         }
         return Optional.empty();

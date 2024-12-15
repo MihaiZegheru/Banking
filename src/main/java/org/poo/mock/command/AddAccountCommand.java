@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.banking.BankingManager;
 import org.poo.banking.user.User;
 import org.poo.banking.user.account.Account;
-import org.poo.banking.user.account.ClassicAccountStrategy;
-import org.poo.banking.user.account.SavingsAccountStrategy;
+import org.poo.banking.user.account.ClassicAccount;
+import org.poo.banking.user.account.SavingsAccount;
 import org.poo.banking.user.tracking.TrackingNode;
 import org.poo.utils.Utils;
 
@@ -30,6 +30,7 @@ public class AddAccountCommand extends BankingCommand {
 
     @Override
     public Optional<ObjectNode> execute() {
+        BankingManager.getInstance().setTime(timestamp);
         Optional<User> userResult = BankingManager.getInstance().getUserByFeature(email);
         if (userResult.isEmpty()) {
             // TODO: Report issue
@@ -39,12 +40,12 @@ public class AddAccountCommand extends BankingCommand {
         Account account = null;
         switch (accountType) {
             case "classic" -> {
-                account = new ClassicAccountStrategy(accountType, Utils.generateIBAN(),
+                account = new ClassicAccount(accountType, Utils.generateIBAN(),
                         currency, user);
                 user.addAccountByIban(account);
             }
             case "savings" -> {
-                account = new SavingsAccountStrategy(accountType, Utils.generateIBAN(),
+                account = new SavingsAccount(accountType, Utils.generateIBAN(),
                         currency, interestRate, user);
                 user.addAccountByIban(account);
             }

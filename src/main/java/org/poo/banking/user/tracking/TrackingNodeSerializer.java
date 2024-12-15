@@ -48,6 +48,9 @@ public class TrackingNodeSerializer extends JsonSerializer<TrackingNode> {
         if (trackingNode.getCurrency() != null) {
             gen.writeStringField("currency", trackingNode.getCurrency());
         }
+        if (trackingNode.getError() != null) {
+            gen.writeStringField("error", trackingNode.getError());
+        }
         if (trackingNode.getInvolvedAccounts() != null) {
             gen.writeObjectField("involvedAccounts", trackingNode.getInvolvedAccounts());
         }

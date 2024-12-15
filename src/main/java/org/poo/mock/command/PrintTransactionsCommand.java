@@ -19,6 +19,7 @@ public class PrintTransactionsCommand extends BankingCommand {
 
     @Override
     public Optional<ObjectNode> execute() {
+        BankingManager.getInstance().setTime(timestamp);
         Optional<User> userResult = BankingManager.getInstance().getUserByFeature(email);
         if (userResult.isEmpty()) {
             // TODO: Report issue

@@ -38,6 +38,7 @@ public class PayOnlineCommand extends BankingCommand {
 
     @Override
     public Optional<ObjectNode> execute() {
+        BankingManager.getInstance().setTime(timestamp);
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode objectNode = objectMapper.createObjectNode();
 

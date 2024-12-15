@@ -14,6 +14,7 @@ import org.poo.mock.command.BankingCommandFactory;
 import org.poo.mock.command.BankingQuerent;
 import org.poo.mock.command.exception.BankingCommandNotImplemented;
 
+import java.util.List;
 import java.util.Optional;
 
 public final class Mocker {
@@ -76,7 +77,7 @@ public final class Mocker {
         ObjectMapper objectMapper = new ObjectMapper();
         ArrayNode arrayNode = objectMapper.createArrayNode();
 
-        BankingQuerent bankingQuerent = new BankingQuerent();
+        BankingQuerent bankingQuerent = BankingManager.getInstance().getQuerent();
 
         for (CommandInput command : testingCommands) {
             BankingCommand bankingCommand;
@@ -86,12 +87,13 @@ public final class Mocker {
                 System.out.println(e.getMessage());
                 continue;
             }
-            Optional<ObjectNode> result = bankingQuerent.query(bankingCommand);
-            if (result.isEmpty()) {
-                continue;
+            List<Optional<ObjectNode>> results = bankingQuerent.query(bankingCommand);
+            for (Optional<ObjectNode> output : results) {
+                if (output.isEmpty()) {
+                    continue;
+                }
+                arrayNode.add(output.get());
             }
-            arrayNode.add(result.get());
-
         }
 
         return  arrayNode;

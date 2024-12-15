@@ -21,6 +21,8 @@ public class CheckCardStatusCommand extends BankingCommand {
 
     @Override
     public Optional<ObjectNode> execute() {
+        BankingManager.getInstance().setTime(timestamp);
+        BankingManager.getInstance().setTime(timestamp);
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode objectNode = objectMapper.createObjectNode();
         objectNode.put("command", command);

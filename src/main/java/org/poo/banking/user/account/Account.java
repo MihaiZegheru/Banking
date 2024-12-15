@@ -8,11 +8,10 @@ import org.poo.banking.transaction.PaymentCollectee;
 import org.poo.banking.transaction.PaymentReceiver;
 import org.poo.banking.user.User;
 import org.poo.banking.user.account.exception.BalanceNotZeroException;
-import org.poo.banking.user.tracking.FlowTracker;
 
 import java.util.*;
 
-public abstract class Account implements SavingStrategy, Owned, Freezable, PaymentCollectee, PaymentReceiver {
+public abstract class Account implements SavingsCollector, Owned, Freezable, PaymentCollectee, PaymentReceiver {
     @Getter
     protected final String type;
     @Getter
@@ -77,5 +76,10 @@ public abstract class Account implements SavingStrategy, Owned, Freezable, Payme
         for (Card card : cards) {
             card.status = "frozen";
         }
+    }
+
+    @Override
+    public String resolveId() {
+        return iban;
     }
 }

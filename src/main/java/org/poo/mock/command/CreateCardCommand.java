@@ -5,7 +5,7 @@ import org.poo.banking.BankingManager;
 import org.poo.banking.user.User;
 import org.poo.banking.user.account.Account;
 import org.poo.banking.user.account.Card;
-import org.poo.banking.user.account.ClassicCardStrategy;
+import org.poo.banking.user.account.ClassicCard;
 import org.poo.banking.user.tracking.TrackingNode;
 import org.poo.utils.Utils;
 
@@ -36,8 +36,8 @@ public class CreateCardCommand extends BankingCommand {
             // TODO: Report issue
             return Optional.empty();
         }
-        Account account = accountResult.get();;
-        Card card = new ClassicCardStrategy(Utils.generateCardNumber(), "active", account);
+        Account account = accountResult.get();
+        Card card = new ClassicCard(Utils.generateCardNumber(), "active", account);
         user.addCardByCardNumber(card);
 
         user.getUserTracker().OnCardCreated(new TrackingNode.TrackingNodeBuilder()

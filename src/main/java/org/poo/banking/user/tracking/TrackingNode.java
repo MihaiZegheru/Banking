@@ -21,6 +21,7 @@ public class TrackingNode {
     private final String cardHolder;
     private final String seller;
     private final String currency;
+    private final String error;
     private final List<String> involvedAccounts;
 
     private final Account producer;
@@ -39,6 +40,7 @@ public class TrackingNode {
         this.seller = builder.seller;
         this.involvedAccounts = builder.involvedAccounts;
         this.currency = builder.currency;
+        this.error= builder.error;
 
         this.producer = builder.producer;
     }
@@ -56,6 +58,7 @@ public class TrackingNode {
         private String cardHolder;
         private String seller;
         private String currency;
+        private String error;
         private List<String> involvedAccounts;
 
         private Account producer;
@@ -117,6 +120,11 @@ public class TrackingNode {
 
         public TrackingNodeBuilder setCurrency(String currency) {
             this.currency = currency;
+            return this;
+        }
+
+        public TrackingNodeBuilder setError(String error) {
+            this.error = error;
             return this;
         }
 

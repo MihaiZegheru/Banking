@@ -28,9 +28,24 @@ public class TransactionTable implements PaymentCollector {
 
     @Override
     public void collect() throws InsufficientFundsException {
+        // TODO: Updated logic by introducing a promise object returned by account. This object
+        // should provide an interface for taxing the user once the payment can surely be done.
         double singleAmount = amount / collectees.size();
-        for (PaymentCollectee collectee : collectees) {
-            collectee.ask(singleAmount, currency);
+        for (int i = collectees.size() - 1; i >= 0; i--) {
+            PaymentCollectee collectee = collectees.get(i);
+            try {
+                collectee.ask(singleAmount, currency);
+            } catch (InsufficientFundsException e) {
+                if (collectees.size() == 1) {
+                    throw e;
+                }
+                for (int j = i + 1; j < collectees.size(); j++) {
+                    collectees.get(j).giveBack(singleAmount, currency);
+                }
+                throw new InsufficientFundsException("Account "
+                        + collectee.resolveId()
+                        + " has insufficient funds for a split payment.");
+            }
         }
         receiver.receive(amount, currency);
     }

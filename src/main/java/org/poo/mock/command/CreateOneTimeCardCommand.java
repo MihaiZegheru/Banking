@@ -25,6 +25,7 @@ public class CreateOneTimeCardCommand extends BankingCommand {
 
     @Override
     public Optional<ObjectNode> execute() {
+        BankingManager.getInstance().setTime(timestamp);
         Optional<User> userResult = BankingManager.getInstance().getUserByFeature(email);
         if (userResult.isEmpty()) {
             return Optional.empty();
@@ -36,6 +37,7 @@ public class CreateOneTimeCardCommand extends BankingCommand {
             // TODO: Report issue
             return Optional.empty();
         }
+        Account account = accountResult.get();;
         Card card = new DisposableCardStrategy(Utils.generateCardNumber(), "active",
                 accountResult.get());
         user.addCardByCardNumber(card);
@@ -46,6 +48,7 @@ public class CreateOneTimeCardCommand extends BankingCommand {
                 .setCardHolder(email)
                 .setDescription("New card created")
                 .setTimestamp(timestamp)
+                .setProducer(account)
                 .build());
         return Optional.empty();
     }

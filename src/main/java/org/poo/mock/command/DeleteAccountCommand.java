@@ -4,12 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.banking.BankingManager;
 import org.poo.banking.user.User;
-import org.poo.banking.user.account.Account;
-import org.poo.banking.user.account.ClassicAccountStrategy;
-import org.poo.banking.user.account.SavingsAccountStrategy;
 import org.poo.banking.user.account.exception.BalanceNotZeroException;
 import org.poo.banking.user.tracking.TrackingNode;
-import org.poo.utils.Utils;
 
 import java.util.Optional;
 
@@ -27,6 +23,7 @@ public class DeleteAccountCommand extends BankingCommand {
 
     @Override
     public Optional<ObjectNode> execute() {
+        BankingManager.getInstance().setTime(timestamp);
         Optional<User> userResult = BankingManager.getInstance().getUserByFeature(email);
         if (userResult.isEmpty()) {
             // TODO: Report issue.
@@ -34,12 +31,14 @@ public class DeleteAccountCommand extends BankingCommand {
         }
         User user = userResult.get();
 
+        TrackingNode.TrackingNodeBuilder trackingBuilder = new TrackingNode.TrackingNodeBuilder()
+                .setTimestamp(timestamp);
+
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode objectNode = objectMapper.createObjectNode();
         ObjectNode outputNode = objectMapper.createObjectNode();
         objectNode.put("command", command);
         objectNode.put("timestamp", timestamp);
-
         try {
             user.removeAccountByIban(iban);
             outputNode.put("success", "Account deleted");
@@ -47,9 +46,11 @@ public class DeleteAccountCommand extends BankingCommand {
         } catch (BalanceNotZeroException e) {
             outputNode.put("error", e.getMessage());
             outputNode.put("timestamp", timestamp);
+            trackingBuilder.setDescription("Account couldn't be deleted - there are funds remaining");
         } finally {
             objectNode.put("output", outputNode);
         }
+        user.getUserTracker().OnAccountDeleted(trackingBuilder.build());
         return Optional.of(objectNode);
     }
 }

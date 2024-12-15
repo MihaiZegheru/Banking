@@ -20,6 +20,7 @@ public class DeleteCardCommand extends BankingCommand {
 
     @Override
     public Optional<ObjectNode> execute() {
+        BankingManager.getInstance().setTime(timestamp);
         Optional<User> userResult = BankingManager.getInstance().getUserByFeature(cardNumber);
         if (userResult.isEmpty()) {
             return Optional.empty();
@@ -33,12 +34,13 @@ public class DeleteCardCommand extends BankingCommand {
         Card card = cardResult.get();
         BankingManager.getInstance().removeFeature(cardNumber);
 
-        user.getUserTracker().OnCardCreated(new TrackingNode.TrackingNodeBuilder()
+        user.getUserTracker().OnCardDeleted(new TrackingNode.TrackingNodeBuilder()
                 .setAccount(card.getOwner().getIban())
                 .setCard(card.getCardNumber())
                 .setCardHolder(user.getEmail())
                 .setDescription("The card has been destroyed")
                 .setTimestamp(timestamp)
+                .setProducer(card.getOwner())
                 .build());
         return Optional.empty();
     }

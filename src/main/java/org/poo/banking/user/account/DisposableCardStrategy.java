@@ -30,27 +30,37 @@ public class DisposableCardStrategy extends Card {
         }
         owner.setBalance(owner.getBalance() - amount);
 
-        Optional<Card> cardResult = owner.getOwner().removeCardByCardNumber(cardNumber);
-        if (cardResult.isEmpty()) {
-            // TODO: Decide if should report issue.
-            return;
-        }
-        BankingManager.getInstance().removeFeature(cardNumber);
+        BankingQuerent bankingQuerent = BankingManager.getInstance().getQuerent();
 
-        BankingQuerent bankingQuerent = new BankingQuerent();
-        CommandInput command = new CommandInput();
-        command.setCommand("createOneTimeCard");
-        command.setAccount(getOwner().iban);
-        command.setEmail(getOwner().getOwner().getEmail());
-        command.setTimestamp(-1);
-
-        BankingCommand bankingCommand;
+        CommandInput removeCommandInput = new CommandInput();
+        removeCommandInput.setCommand("deleteCard");
+        removeCommandInput.setCardNumber(cardNumber);
+        removeCommandInput.setTimestamp(BankingManager.getInstance().getTime());
+        BankingCommand removeCommand;
         try {
-            bankingCommand = BankingCommandFactory.createBankingCommand(command);
+            removeCommand = BankingCommandFactory.createBankingCommand(removeCommandInput);
         } catch (BankingCommandNotImplemented e) {
             System.out.println(e.getMessage());
             return;
         }
-        bankingQuerent.query(bankingCommand);
+        bankingQuerent.queue(removeCommand);
+
+        CommandInput addCommandInput = new CommandInput();
+        addCommandInput.setCommand("createOneTimeCard");
+        addCommandInput.setAccount(getOwner().iban);
+        addCommandInput.setEmail(getOwner().getOwner().getEmail());
+        addCommandInput.setTimestamp(BankingManager.getInstance().getTime());
+        BankingCommand addCommand;
+        try {
+            addCommand = BankingCommandFactory.createBankingCommand(addCommandInput);
+        } catch (BankingCommandNotImplemented e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+        bankingQuerent.queue(addCommand);
+    }
+
+    @Override
+    public void giveBack(double amount, String currency) {
     }
 }

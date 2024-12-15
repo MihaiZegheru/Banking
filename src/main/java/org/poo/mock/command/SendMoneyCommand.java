@@ -2,6 +2,7 @@ package org.poo.mock.command;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.banking.BankingManager;
+import org.poo.banking.currency.ForexGenie;
 import org.poo.banking.transaction.TransactionTable;
 import org.poo.banking.user.User;
 import org.poo.banking.user.account.Account;
@@ -30,6 +31,7 @@ public class SendMoneyCommand extends BankingCommand {
 
     @Override
     public Optional<ObjectNode> execute() {
+        BankingManager.getInstance().setTime(timestamp);
         Optional<User> senderUserResult = BankingManager.getInstance().getUserByFeature(iban);
         if (senderUserResult.isEmpty()) {
             // TODO: Report issue
@@ -61,22 +63,41 @@ public class SendMoneyCommand extends BankingCommand {
         }
         Account receiverAccount = receiverAccountResult.get();
 
-        TrackingNode.TrackingNodeBuilder trackingBuilder = new TrackingNode.TrackingNodeBuilder()
+        TrackingNode.TrackingNodeBuilder senderTrackingBuilder = new TrackingNode.TrackingNodeBuilder()
                 .setTimestamp(timestamp)
                 .setProducer(senderAccount);
+
+        TrackingNode.TrackingNodeBuilder receiverTrackingBuilder = new TrackingNode.TrackingNodeBuilder()
+                .setTimestamp(timestamp)
+                .setProducer(receiverAccount);
 
         TransactionTable transaction = new TransactionTable(senderAccount, receiverAccount, amount, senderAccount.getCurrency());
         try {
             transaction.collect();
-            trackingBuilder.setAmountLiteral(amount + " " + senderAccount.getCurrency())
+            senderUser.getUserTracker().OnTransaction(senderTrackingBuilder
+                    .setAmountLiteral(amount + " " + senderAccount.getCurrency())
                     .setDescription(description)
                     .setSenderIban(iban)
                     .setReceiverIban(receiverIban)
-                    .setTransferType("sent");
+                    .setTransferType("sent")
+                    .setProducer(senderAccount)
+                    .build());
+
+            ForexGenie genie = BankingManager.getInstance().getForexGenie();
+            receiverUser.getUserTracker().OnTransaction(receiverTrackingBuilder
+                    .setAmountLiteral(
+                            genie.queryRate(senderAccount.getCurrency(),
+                                    receiverAccount.getCurrency(), amount) + " "
+                                    + receiverAccount.getCurrency())
+                    .setDescription(description)
+                    .setSenderIban(iban)
+                    .setReceiverIban(receiverIban)
+                    .setTransferType("received")
+                    .setProducer(receiverAccount)
+                    .build());
         } catch (InsufficientFundsException e) {
-            trackingBuilder.setDescription(e.getMessage());
-        } finally {
-            senderUser.getUserTracker().OnTransaction(trackingBuilder.build());
+            senderTrackingBuilder.setDescription(e.getMessage());
+            senderUser.getUserTracker().OnTransaction(senderTrackingBuilder.build());
         }
         return Optional.empty();
     }

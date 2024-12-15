@@ -35,4 +35,9 @@ public abstract class Card implements Owned, Freezable, PaymentCollectee {
     public void OnFrozen() {
         status = "frozen";
     }
+
+    @Override
+    public String resolveId() {
+        return owner.getIban();
+    }
 }

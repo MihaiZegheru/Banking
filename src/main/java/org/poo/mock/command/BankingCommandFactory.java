@@ -121,6 +121,17 @@ public class BankingCommandFactory {
                         commandInput.getAccount(),
                         commandInput.getTimestamp());
             }
+            case "changeInterestRate" -> {
+                return new ChangeInterestCommand(commandInput.getCommand(),
+                        commandInput.getAccount(),
+                        commandInput.getInterestRate(),
+                        commandInput.getTimestamp());
+            }
+            case "addInterest" -> {
+                return new AddInterestCommand(commandInput.getCommand(),
+                        commandInput.getAccount(),
+                        commandInput.getTimestamp());
+            }
             default -> throw new BankingCommandNotImplemented(
                     "BankingCommand "
                     + commandInput.getCommand()

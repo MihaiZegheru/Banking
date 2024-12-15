@@ -7,8 +7,8 @@ import org.poo.banking.user.account.exception.InsufficientFundsException;
 
 import java.util.Objects;
 
-public class ClassicCardStrategy extends Card {
-    public ClassicCardStrategy(String cardNumber, String status, Account owner) {
+public class ClassicCard extends Card {
+    public ClassicCard(String cardNumber, String status, Account owner) {
         super(cardNumber, status, owner);
     }
 
@@ -23,5 +23,9 @@ public class ClassicCardStrategy extends Card {
             throw new InsufficientFundsException("Insufficient funds");
         }
         owner.setBalance(owner.getBalance() - amount);
+    }
+
+    @Override
+    public void giveBack(double amount, String currency) {
     }
 }
