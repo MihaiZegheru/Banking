@@ -5,7 +5,7 @@ import org.poo.banking.BankingManager;
 import org.poo.banking.user.User;
 import org.poo.banking.user.account.Account;
 import org.poo.banking.user.card.Card;
-import org.poo.banking.user.card.DisposableCardStrategy;
+import org.poo.banking.user.card.DisposableCard;
 import org.poo.banking.user.tracking.TrackingNode;
 import org.poo.utils.Utils;
 
@@ -38,7 +38,7 @@ public final class CreateOneTimeCardCommand extends BankingCommand {
             return Optional.empty();
         }
         Account account = accountResult.get();
-        Card card = new DisposableCardStrategy(Utils.generateCardNumber(), "active",
+        Card card = new DisposableCard(Utils.generateCardNumber(), "active",
                 accountResult.get());
         user.addCardByCardNumber(card);
 

@@ -16,9 +16,9 @@ import java.util.Objects;
 /**
  * Card instance gets deleted once a payment is done. A new one is created immediately.
  */
-public final class DisposableCardStrategy extends Card {
-    public DisposableCardStrategy(final String cardNumber, final String status,
-                                  final Account owner) {
+public final class DisposableCard extends Card {
+    public DisposableCard(final String cardNumber, final String status,
+                          final Account owner) {
         super(cardNumber, status, owner);
     }
 
