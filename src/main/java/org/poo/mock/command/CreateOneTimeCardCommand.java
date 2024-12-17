@@ -4,19 +4,20 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.banking.BankingManager;
 import org.poo.banking.user.User;
 import org.poo.banking.user.account.Account;
-import org.poo.banking.user.account.Card;
-import org.poo.banking.user.account.DisposableCardStrategy;
+import org.poo.banking.user.card.Card;
+import org.poo.banking.user.card.DisposableCardStrategy;
 import org.poo.banking.user.tracking.TrackingNode;
 import org.poo.utils.Utils;
 
 import java.util.Optional;
 
-public class CreateOneTimeCardCommand extends BankingCommand {
+public final class CreateOneTimeCardCommand extends BankingCommand {
     private final String iban;
     private final String email;
     private final int timestamp;
 
-    public CreateOneTimeCardCommand(String command, String iban, String email, int timestamp) {
+    public CreateOneTimeCardCommand(final String command, final String iban, final String email,
+                                    final int timestamp) {
         super(command);
         this.iban = iban;
         this.email = email;
@@ -34,15 +35,14 @@ public class CreateOneTimeCardCommand extends BankingCommand {
 
         Optional<Account> accountResult = user.getAccountByIban(iban);
         if (accountResult.isEmpty()) {
-            // TODO: Report issue
             return Optional.empty();
         }
-        Account account = accountResult.get();;
+        Account account = accountResult.get();
         Card card = new DisposableCardStrategy(Utils.generateCardNumber(), "active",
                 accountResult.get());
         user.addCardByCardNumber(card);
 
-        user.getUserTracker().OnCardCreated(new TrackingNode.TrackingNodeBuilder()
+        user.getUserTracker().onCardCreated(new TrackingNode.TrackingNodeBuilder()
                 .setAccount(iban)
                 .setCard(card.getCardNumber())
                 .setCardHolder(email)

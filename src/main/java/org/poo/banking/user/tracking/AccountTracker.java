@@ -1,10 +1,13 @@
 package org.poo.banking.user.tracking;
 
-public interface AccountTracker {
-    void OnAccountCreated(TrackingNode trackingNode);
-    void OnAccountDeleted(TrackingNode trackingNode);
-    void OnCardCreated(TrackingNode trackingNode);
-    void OnCardDeleted(TrackingNode trackingNode);
-    void OnCardFrozen(TrackingNode trackingNode);
-    void OnInterestRateChanged(TrackingNode trackingNode);
+/**
+ * Offers an interface for tracking account related commands.
+ */
+interface AccountTracker {
+    void onAccountCreated(TrackingNode trackingNode);
+    void onAccountDeleted(TrackingNode trackingNode);
+    void onCardCreated(TrackingNode trackingNode);
+    void onCardDeleted(TrackingNode trackingNode);
+    void onCardFrozen(TrackingNode trackingNode);
+    void onInterestRateChanged(TrackingNode trackingNode);
 }

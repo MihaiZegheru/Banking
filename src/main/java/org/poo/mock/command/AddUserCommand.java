@@ -6,12 +6,13 @@ import org.poo.banking.user.User;
 
 import java.util.Optional;
 
-public class AddUserCommand extends BankingCommand {
+public final class AddUserCommand extends BankingCommand {
     private final String firstName;
     private final String lastname;
     private final String email;
 
-    public AddUserCommand(String command, String firstName, String lastname, String email) {
+    public AddUserCommand(final String command, final String firstName, final String lastname,
+                          final String email) {
         super(command);
         this.firstName = firstName;
         this.lastname = lastname;

@@ -9,11 +9,11 @@ import org.poo.banking.user.account.exception.AccountIsNotSavingsAccount;
 
 import java.util.Optional;
 
-public class AddInterestCommand extends BankingCommand {
+public final class AddInterestCommand extends BankingCommand {
     private final String iban;
     private final int timestamp;
 
-    public AddInterestCommand(String command, String iban, int timestamp) {
+    public AddInterestCommand(final String command, final String iban, final int timestamp) {
         super(command);
         this.iban = iban;
         this.timestamp = timestamp;
@@ -24,7 +24,6 @@ public class AddInterestCommand extends BankingCommand {
         BankingManager.getInstance().setTime(timestamp);
         Optional<User> userResult = BankingManager.getInstance().getUserByFeature(iban);
         if (userResult.isEmpty()) {
-            // TODO: Report issue
             return Optional.empty();
         }
         User user = userResult.get();

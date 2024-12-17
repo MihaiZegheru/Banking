@@ -7,12 +7,13 @@ import org.poo.banking.user.account.Account;
 
 import java.util.Optional;
 
-public class AddFundsCommand extends BankingCommand {
+public final class AddFundsCommand extends BankingCommand {
     private final double amount;
     private final String iban;
     private final int timestamp;
 
-    public AddFundsCommand(String command, double amount, String iban, int timestamp) {
+    public AddFundsCommand(final String command, final double amount, final String iban,
+                           final int timestamp) {
         super(command);
         this.amount = amount;
         this.iban = iban;
@@ -29,11 +30,10 @@ public class AddFundsCommand extends BankingCommand {
         User user = userResult.get();
         Optional<Account> accountResult = user.getAccountByIban(iban);
         if (accountResult.isEmpty()) {
-            // TODO: Report issue
             return Optional.empty();
         }
         Account account = accountResult.get();
-        account.addFunds(amount);
+        account.receive(amount, account.getCurrency());
         return Optional.empty();
     }
 }

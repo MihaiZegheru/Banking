@@ -11,15 +11,15 @@ import org.poo.banking.user.tracking.TrackingNode;
 
 import java.util.Optional;
 
-public class SendMoneyCommand extends BankingCommand {
+public final class SendMoneyCommand extends BankingCommand {
     private final String iban;
     private final double amount;
     private final String receiver;
     private final String description;
     private final int timestamp;
 
-    public SendMoneyCommand(String command, String iban, double amount, String receiver,
-                            String description, int timestamp) {
+    public SendMoneyCommand(final String command, final String iban, final double amount,
+                            final String receiver, final String description, final int timestamp) {
         super(command);
         this.iban = iban;
         this.amount = amount;
@@ -28,19 +28,16 @@ public class SendMoneyCommand extends BankingCommand {
         this.timestamp = timestamp;
     }
 
-
     @Override
     public Optional<ObjectNode> execute() {
         BankingManager.getInstance().setTime(timestamp);
         Optional<User> senderUserResult = BankingManager.getInstance().getUserByFeature(iban);
         if (senderUserResult.isEmpty()) {
-            // TODO: Report issue
             return Optional.empty();
         }
         User senderUser = senderUserResult.get();
         Optional<Account> senderAccountResult = senderUser.getAccountByIban(iban);
         if (senderAccountResult.isEmpty()) {
-            // TODO: Report issue
             return Optional.empty();
         }
         Account senderAccount = senderAccountResult.get();
@@ -52,29 +49,30 @@ public class SendMoneyCommand extends BankingCommand {
         Optional<User> receiverUserResult =
                 BankingManager.getInstance().getUserByFeature(receiverIban);
         if (receiverUserResult.isEmpty()) {
-            // TODO: Report issue
             return Optional.empty();
         }
         User receiverUser = receiverUserResult.get();
         Optional<Account> receiverAccountResult = receiverUser.getAccountByIban(receiverIban);
         if (receiverAccountResult.isEmpty()) {
-            // TODO: Report issue
             return Optional.empty();
         }
         Account receiverAccount = receiverAccountResult.get();
 
-        TrackingNode.TrackingNodeBuilder senderTrackingBuilder = new TrackingNode.TrackingNodeBuilder()
-                .setTimestamp(timestamp)
-                .setProducer(senderAccount);
+        TrackingNode.TrackingNodeBuilder senderTrackingBuilder =
+                new TrackingNode.TrackingNodeBuilder()
+                        .setTimestamp(timestamp)
+                        .setProducer(senderAccount);
 
-        TrackingNode.TrackingNodeBuilder receiverTrackingBuilder = new TrackingNode.TrackingNodeBuilder()
-                .setTimestamp(timestamp)
-                .setProducer(receiverAccount);
+        TrackingNode.TrackingNodeBuilder receiverTrackingBuilder =
+                new TrackingNode.TrackingNodeBuilder()
+                        .setTimestamp(timestamp)
+                        .setProducer(receiverAccount);
 
-        TransactionTable transaction = new TransactionTable(senderAccount, receiverAccount, amount, senderAccount.getCurrency());
+        TransactionTable transaction = new TransactionTable(senderAccount, receiverAccount, amount,
+                senderAccount.getCurrency());
         try {
             transaction.collect();
-            senderUser.getUserTracker().OnTransaction(senderTrackingBuilder
+            senderUser.getUserTracker().onTransaction(senderTrackingBuilder
                     .setAmountLiteral(amount + " " + senderAccount.getCurrency())
                     .setDescription(description)
                     .setSenderIban(iban)
@@ -84,7 +82,7 @@ public class SendMoneyCommand extends BankingCommand {
                     .build());
 
             ForexGenie genie = BankingManager.getInstance().getForexGenie();
-            receiverUser.getUserTracker().OnTransaction(receiverTrackingBuilder
+            receiverUser.getUserTracker().onTransaction(receiverTrackingBuilder
                     .setAmountLiteral(
                             genie.queryRate(senderAccount.getCurrency(),
                                     receiverAccount.getCurrency(), amount) + " "
@@ -97,7 +95,7 @@ public class SendMoneyCommand extends BankingCommand {
                     .build());
         } catch (InsufficientFundsException e) {
             senderTrackingBuilder.setDescription(e.getMessage());
-            senderUser.getUserTracker().OnTransaction(senderTrackingBuilder.build());
+            senderUser.getUserTracker().onTransaction(senderTrackingBuilder.build());
         }
         return Optional.empty();
     }

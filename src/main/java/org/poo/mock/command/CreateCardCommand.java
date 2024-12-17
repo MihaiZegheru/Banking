@@ -4,19 +4,20 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.banking.BankingManager;
 import org.poo.banking.user.User;
 import org.poo.banking.user.account.Account;
-import org.poo.banking.user.account.Card;
-import org.poo.banking.user.account.ClassicCard;
+import org.poo.banking.user.card.Card;
+import org.poo.banking.user.card.ClassicCard;
 import org.poo.banking.user.tracking.TrackingNode;
 import org.poo.utils.Utils;
 
 import java.util.Optional;
 
-public class CreateCardCommand extends BankingCommand {
+public final class CreateCardCommand extends BankingCommand {
     private final String iban;
     private final String email;
     private final int timestamp;
 
-    public CreateCardCommand(String command, String iban, String email, int timestamp) {
+    public CreateCardCommand(final String command, final String iban, final String email,
+                             final int timestamp) {
         super(command);
         this.iban = iban;
         this.email = email;
@@ -33,14 +34,13 @@ public class CreateCardCommand extends BankingCommand {
 
         Optional<Account> accountResult = user.getAccountByIban(iban);
         if (accountResult.isEmpty()) {
-            // TODO: Report issue
             return Optional.empty();
         }
         Account account = accountResult.get();
         Card card = new ClassicCard(Utils.generateCardNumber(), "active", account);
         user.addCardByCardNumber(card);
 
-        user.getUserTracker().OnCardCreated(new TrackingNode.TrackingNodeBuilder()
+        user.getUserTracker().onCardCreated(new TrackingNode.TrackingNodeBuilder()
                 .setAccount(iban)
                 .setCard(card.getCardNumber())
                 .setCardHolder(email)

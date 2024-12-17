@@ -11,15 +11,15 @@ import org.poo.utils.Utils;
 
 import java.util.Optional;
 
-public class AddAccountCommand extends BankingCommand {
+public final class AddAccountCommand extends BankingCommand {
     private final String accountType;
     private final String currency;
     private final String email;
     private final double interestRate;
     private final int timestamp;
 
-    public AddAccountCommand(String command, String accountType, String currency, String email,
-                             double interestRate, int timestamp) {
+    public AddAccountCommand(final String command, final String accountType, final String currency,
+                             final String email, final double interestRate, final int timestamp) {
         super(command);
         this.accountType = accountType;
         this.currency = currency;
@@ -33,7 +33,6 @@ public class AddAccountCommand extends BankingCommand {
         BankingManager.getInstance().setTime(timestamp);
         Optional<User> userResult = BankingManager.getInstance().getUserByFeature(email);
         if (userResult.isEmpty()) {
-            // TODO: Report issue
             return Optional.empty();
         }
         User user = userResult.get();
@@ -49,8 +48,11 @@ public class AddAccountCommand extends BankingCommand {
                         currency, interestRate, user);
                 user.addAccountByIban(account);
             }
+            default -> {
+                return Optional.empty();
+            }
         }
-        user.getUserTracker().OnAccountCreated(new TrackingNode.TrackingNodeBuilder()
+        user.getUserTracker().onAccountCreated(new TrackingNode.TrackingNodeBuilder()
                 .setDescription("New account created")
                 .setTimestamp(timestamp)
                 .setProducer(account)

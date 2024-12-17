@@ -3,9 +3,15 @@ package org.poo.mock.command;
 import org.poo.mock.command.exception.BankingCommandNotImplemented;
 import org.poo.fileio.CommandInput;
 
-public class BankingCommandFactory {
-    public static BankingCommand createBankingCommand(CommandInput commandInput)
-            throws BankingCommandNotImplemented{
+public final class BankingCommandFactory {
+    /**
+     * Builds a BankingCommand based on provided CommandInput.
+     * @param commandInput contains command parameters
+     * @return BankingCommand
+     * @throws BankingCommandNotImplemented command is not implemented
+     */
+    public static BankingCommand createBankingCommand(final CommandInput commandInput)
+            throws BankingCommandNotImplemented {
         switch (commandInput.getCommand()) {
             case "addUser" -> {
                 return new AddUserCommand(commandInput.getCommand(),
@@ -137,5 +143,9 @@ public class BankingCommandFactory {
                     + commandInput.getCommand()
                     + " has no implementation.");
         }
+    }
+
+    private BankingCommandFactory() {
+
     }
 }

@@ -1,31 +1,32 @@
-package org.poo.banking.user.account;
+package org.poo.banking.user.card;
 
 import org.poo.banking.BankingManager;
 import org.poo.banking.currency.ForexGenie;
+import org.poo.banking.user.account.Account;
 import org.poo.banking.user.account.exception.FrozenCardException;
 import org.poo.banking.user.account.exception.InsufficientFundsException;
 
 import java.util.Objects;
 
-public class ClassicCard extends Card {
-    public ClassicCard(String cardNumber, String status, Account owner) {
+public final class ClassicCard extends Card {
+    public ClassicCard(final String cardNumber, final String status, final Account owner) {
         super(cardNumber, status, owner);
     }
 
     @Override
-    public void ask(double amount, String currency) throws InsufficientFundsException {
+    public void ask(final double amount, final String currency) throws InsufficientFundsException {
         ForexGenie forexGenie = BankingManager.getInstance().getForexGenie();
-        amount = forexGenie.queryRate(currency, owner.getCurrency(), amount);
+        double newAmount = forexGenie.queryRate(currency, owner.getCurrency(), amount);
         if (Objects.equals(status, "frozen")) {
             throw new FrozenCardException("The card is frozen");
         }
-        if (amount > owner.getBalance()) {
+        if (newAmount > owner.getBalance()) {
             throw new InsufficientFundsException("Insufficient funds");
         }
-        owner.setBalance(owner.getBalance() - amount);
+        owner.setBalance(owner.getBalance() - newAmount);
     }
 
     @Override
-    public void giveBack(double amount, String currency) {
+    public void giveBack(final double amount, final String currency) {
     }
 }

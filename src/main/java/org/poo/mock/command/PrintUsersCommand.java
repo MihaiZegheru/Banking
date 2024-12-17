@@ -6,10 +6,10 @@ import org.poo.banking.BankingManager;
 
 import java.util.Optional;
 
-public class PrintUsersCommand extends BankingCommand {
+public final class PrintUsersCommand extends BankingCommand {
     private final int timestamp;
 
-    public PrintUsersCommand(String command, int timestamp) {
+    public PrintUsersCommand(final String command, final int timestamp) {
         super(command);
         this.timestamp = timestamp;
     }

@@ -2,14 +2,22 @@ package org.poo.banking.currency;
 
 import org.poo.utils.IDGenerator;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.LinkedList;
 
-public class ForexGenie {
+public final class ForexGenie {
     private final Map<FXNode, List<FXEdge>> fxGraph = new HashMap<>();
     private final Map<String, FXNode> currencies = new HashMap<>();
     private final IDGenerator idGenerator = new IDGenerator();
 
-    public void addCurrency(String from, String to, double rate) {
+    /**
+     * Adds a currency exchange.
+     */
+    public void addCurrency(final String from, final String to, final double rate) {
         if (!currencies.containsKey(from)) {
             currencies.put(from, new FXNode(from, idGenerator.next()));
             fxGraph.put(currencies.get(from), new ArrayList<>());
@@ -23,12 +31,21 @@ public class ForexGenie {
         fxGraph.get(currencies.get(to)).add(new FXEdge(currencies.get(from), 1 / rate));
     }
 
-    public double queryRate(String from, String to, double amount) {
-        // TODO: Add check that from and to exist.
+    /**
+     * Converts given amount into another currency.
+     * @param from initial currency
+     * @param to final currency
+     * @param amount to be converted
+     * @return converted amount
+     */
+    public double queryRate(final String from, final String to, final double amount) {
+        if (from.equals(to)) {
+            return amount;
+        }
         return computeBellmanFord(currencies.get(from), currencies.get(to), amount);
     }
 
-    private double computeBellmanFord(FXNode from, FXNode to, double amount) {
+    private double computeBellmanFord(final FXNode from, final FXNode to, final double amount) {
         Queue<FXEdge> queue = new LinkedList<>();
         Map<FXNode, Double> distances = new HashMap<>();
         Map<FXNode, Boolean> visited = new HashMap<>();
@@ -49,12 +66,12 @@ public class ForexGenie {
             visited.put(currEdge.getDestination(), true);
 
             for (FXEdge edge: fxGraph.get(currEdge.getDestination())) {
-                if (edge.getCost() * distances.get(currEdge.getDestination()) >=
-                        distances.get(edge.getDestination())) {
+                if (edge.getCost() * distances.get(currEdge.getDestination())
+                        >= distances.get(edge.getDestination())) {
                     continue;
                 }
-                distances.put(edge.getDestination(), edge.getCost() *
-                        distances.get(currEdge.getDestination()));
+                distances.put(edge.getDestination(), edge.getCost()
+                        * distances.get(currEdge.getDestination()));
                 queue.add(edge);
             }
         }

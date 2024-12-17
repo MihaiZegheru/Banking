@@ -5,20 +5,22 @@ import org.poo.banking.user.account.exception.InsufficientFundsException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TransactionTable implements PaymentCollector {
+public final class TransactionTable implements PaymentCollector {
     private final List<PaymentCollectee> collectees;
     private final PaymentReceiver receiver;
     private final double amount;
     private final String currency;
 
-    public TransactionTable(List<PaymentCollectee> collectees, PaymentReceiver receiver, double amount, String currency) {
+    public TransactionTable(final List<PaymentCollectee> collectees, final PaymentReceiver receiver,
+                            final double amount, final String currency) {
         this.collectees = collectees;
         this.receiver = receiver;
         this.amount = amount;
         this.currency = currency;
     }
 
-    public TransactionTable(PaymentCollectee collectee, PaymentReceiver receiver, double amount, String currency) {
+    public TransactionTable(final PaymentCollectee collectee, final PaymentReceiver receiver,
+                            final double amount, final String currency) {
         this.collectees = new ArrayList<>();
         collectees.add(collectee);
         this.receiver = receiver;
@@ -28,7 +30,7 @@ public class TransactionTable implements PaymentCollector {
 
     @Override
     public void collect() throws InsufficientFundsException {
-        // TODO: Updated logic by introducing a promise object returned by account. This object
+        // TODO: Update logic by introducing a promise object returned by account. This object
         // should provide an interface for taxing the user once the payment can surely be done.
         double singleAmount = amount / collectees.size();
         for (int i = collectees.size() - 1; i >= 0; i--) {

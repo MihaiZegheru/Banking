@@ -1,5 +1,8 @@
 package org.poo.banking.user.tracking;
 
-public interface TransactionTracker {
-    void OnTransaction(TrackingNode trackingNode);
+/**
+ * Offers an interface for tracking transaction related commands.
+ */
+interface TransactionTracker {
+    void onTransaction(TrackingNode trackingNode);
 }

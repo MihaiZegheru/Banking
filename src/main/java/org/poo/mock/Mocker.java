@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.banking.BankingManager;
-import org.poo.banking.user.User;
 import org.poo.fileio.CommandInput;
 import org.poo.fileio.ExchangeInput;
 import org.poo.fileio.ObjectInput;
@@ -18,11 +17,16 @@ import java.util.List;
 import java.util.Optional;
 
 public final class Mocker {
+    /**
+     * Mocks the Banking System based on provided testing input.
+     * @param testingInput test to be mocked against
+     * @return output in JSON format as ArrayNode.
+     */
     public static ArrayNode mock(final ObjectInput testingInput) {
         BankingManager bankingManager = BankingManager.getInstance();
 
-        // TODO: Add lombok getters everywhere.
         // TODO: Separate Jackson logic from commands by returning an output object / exception.
+
         populateUsers(testingInput.getUsers());
         populateCurrencies(testingInput.getExchangeRates());
         ArrayNode arrayNode = runCommands(testingInput.getCommands());
@@ -97,5 +101,9 @@ public final class Mocker {
         }
 
         return  arrayNode;
+    }
+
+    private Mocker() {
+
     }
 }

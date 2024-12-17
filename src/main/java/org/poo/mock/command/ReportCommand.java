@@ -8,14 +8,14 @@ import org.poo.banking.user.account.Account;
 
 import java.util.Optional;
 
-public class ReportCommand extends BankingCommand {
+public final class ReportCommand extends BankingCommand {
     private final int startTimestamp;
     private final int endTimestamp;
     private final String iban;
     private final int timestamp;
 
-    public ReportCommand(String command, int startTimestamp, int endTimestamp, String iban,
-                         int timestamp) {
+    public ReportCommand(final String command, final int startTimestamp, final int endTimestamp,
+                         final String iban, final int timestamp) {
         super(command);
         this.startTimestamp = startTimestamp;
         this.endTimestamp = endTimestamp;

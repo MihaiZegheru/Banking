@@ -7,7 +7,7 @@ import org.poo.banking.currency.ForexGenie;
 import org.poo.banking.transaction.TransactionTable;
 import org.poo.banking.transaction.ZeroPaymentReceiver;
 import org.poo.banking.user.User;
-import org.poo.banking.user.account.Card;
+import org.poo.banking.user.card.Card;
 import org.poo.banking.user.account.exception.FrozenCardException;
 import org.poo.banking.user.account.exception.InsufficientFundsException;
 import org.poo.banking.user.account.exception.MinimumBalanceReachedException;
@@ -15,7 +15,7 @@ import org.poo.banking.user.tracking.TrackingNode;
 
 import java.util.Optional;
 
-public class PayOnlineCommand extends BankingCommand {
+public final class PayOnlineCommand extends BankingCommand {
     private final String cardNumber;
     private final double amount;
     private final String currency;
@@ -24,8 +24,9 @@ public class PayOnlineCommand extends BankingCommand {
     private final String email;
     private final int timestamp;
 
-    public PayOnlineCommand(String command, String cardNumber, double amount, String currency,
-                            String description, String seller, String email, int timestamp) {
+    public PayOnlineCommand(final String command, final String cardNumber, final double amount,
+                            final String currency, final String description, final String seller,
+                            final String email, final int timestamp) {
         super(command);
         this.cardNumber = cardNumber;
         this.amount = amount;
@@ -61,22 +62,25 @@ public class PayOnlineCommand extends BankingCommand {
         }
         Card card = cardResult.get();
 
-        // TODO: Change to parent BankingException in order to limitate duplicate code.
         TrackingNode.TrackingNodeBuilder trackingBuilder = new TrackingNode.TrackingNodeBuilder()
                 .setTimestamp(timestamp)
                 .setProducer(card.getOwner());
-        TransactionTable transaction = new TransactionTable(card, new ZeroPaymentReceiver(), amount, currency);
+        TransactionTable transaction = new TransactionTable(card, new ZeroPaymentReceiver(), amount,
+                currency);
         try {
             transaction.collect();
             ForexGenie forexGenie = BankingManager.getInstance().getForexGenie();
-            double convertedPaidAmount = forexGenie.queryRate(currency, card.getOwner().getCurrency(), amount);
+            double convertedPaidAmount = forexGenie.queryRate(currency,
+                    card.getOwner().getCurrency(), amount);
             trackingBuilder.setAmount(convertedPaidAmount)
                     .setSeller(seller)
                     .setDescription("Card payment");
-        } catch (InsufficientFundsException | MinimumBalanceReachedException | FrozenCardException e) {
+        } catch (InsufficientFundsException
+                 | MinimumBalanceReachedException
+                 | FrozenCardException e) {
             trackingBuilder.setDescription(e.getMessage());
         } finally {
-            user.getUserTracker().OnTransaction(trackingBuilder.build());
+            user.getUserTracker().onTransaction(trackingBuilder.build());
         }
         return Optional.empty();
     }

@@ -15,14 +15,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class SplitPaymentCommand extends BankingCommand {
+public final class SplitPaymentCommand extends BankingCommand {
     private final List<String> ibans;
     private final double amount;
     private final String currency;
     private final int timestamp;
 
-    public SplitPaymentCommand(String command, List<String> ibans, double amount, String currency,
-                               int timestamp) {
+    public SplitPaymentCommand(final String command, final List<String> ibans, final double amount,
+                               final String currency, final int timestamp) {
         super(command);
         this.ibans = ibans;
         this.amount = amount;
@@ -38,13 +38,11 @@ public class SplitPaymentCommand extends BankingCommand {
         for (String iban : ibans) {
             Optional<User> senderUserResult = BankingManager.getInstance().getUserByFeature(iban);
             if (senderUserResult.isEmpty()) {
-                // TODO: Report issue
                 return Optional.empty();
             }
             User senderUser = senderUserResult.get();
             Optional<Account> senderAccountResult = senderUser.getAccountByIban(iban);
             if (senderAccountResult.isEmpty()) {
-                // TODO: Report issue
                 return Optional.empty();
             }
             collecteeAccounts.add(senderAccountResult.get());
@@ -59,15 +57,15 @@ public class SplitPaymentCommand extends BankingCommand {
                 .setInvolvedAccounts(ibans)
                 .setDescription("Split payment of " + f.format(amount) + " " + currency);
 
-        TransactionTable transaction = new TransactionTable(collecteeAccounts, new ZeroPaymentReceiver(),
-                amount, currency);
+        TransactionTable transaction = new TransactionTable(collecteeAccounts,
+                new ZeroPaymentReceiver(), amount, currency);
         try {
             transaction.collect();
         } catch (InsufficientFundsException e) {
             trackingBuilder.setError(e.getMessage());
         } finally {
             for (Account account : accounts) {
-                account.getOwner().getUserTracker().OnTransaction(trackingBuilder
+                account.getOwner().getUserTracker().onTransaction(trackingBuilder
                         .setProducer(account)
                         .build());
             }

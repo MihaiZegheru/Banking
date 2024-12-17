@@ -1,7 +1,8 @@
-package org.poo.banking.user.account;
+package org.poo.banking.user.card;
 
 import org.poo.banking.BankingManager;
 import org.poo.banking.currency.ForexGenie;
+import org.poo.banking.user.account.Account;
 import org.poo.banking.user.account.exception.FrozenCardException;
 import org.poo.banking.user.account.exception.InsufficientFundsException;
 import org.poo.fileio.CommandInput;
@@ -11,24 +12,27 @@ import org.poo.mock.command.BankingQuerent;
 import org.poo.mock.command.exception.BankingCommandNotImplemented;
 
 import java.util.Objects;
-import java.util.Optional;
 
-public class DisposableCardStrategy extends Card {
-    public DisposableCardStrategy(String cardNumber, String status, Account owner) {
+/**
+ * Card instance gets deleted once a payment is done. A new one is created immediately.
+ */
+public final class DisposableCardStrategy extends Card {
+    public DisposableCardStrategy(final String cardNumber, final String status,
+                                  final Account owner) {
         super(cardNumber, status, owner);
     }
 
     @Override
-    public void ask(double amount, String currency) throws InsufficientFundsException {
+    public void ask(final double amount, final String currency) throws InsufficientFundsException {
         ForexGenie forexGenie = BankingManager.getInstance().getForexGenie();
-        amount = forexGenie.queryRate(currency, owner.getCurrency(), amount);
+        double newAmount = forexGenie.queryRate(currency, owner.getCurrency(), amount);
         if (Objects.equals(status, "frozen")) {
             throw new FrozenCardException("The card is frozen");
         }
-        if (amount > owner.getBalance()) {
+        if (newAmount > owner.getBalance()) {
             throw new InsufficientFundsException("Insufficient funds");
         }
-        owner.setBalance(owner.getBalance() - amount);
+        owner.setBalance(owner.getBalance() - newAmount);
 
         BankingQuerent bankingQuerent = BankingManager.getInstance().getQuerent();
 
@@ -47,7 +51,7 @@ public class DisposableCardStrategy extends Card {
 
         CommandInput addCommandInput = new CommandInput();
         addCommandInput.setCommand("createOneTimeCard");
-        addCommandInput.setAccount(getOwner().iban);
+        addCommandInput.setAccount(getOwner().getIban());
         addCommandInput.setEmail(getOwner().getOwner().getEmail());
         addCommandInput.setTimestamp(BankingManager.getInstance().getTime());
         BankingCommand addCommand;
@@ -61,6 +65,6 @@ public class DisposableCardStrategy extends Card {
     }
 
     @Override
-    public void giveBack(double amount, String currency) {
+    public void giveBack(final double amount, final String currency) {
     }
 }

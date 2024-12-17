@@ -7,8 +7,8 @@ import org.poo.banking.user.account.Account;
 import java.util.List;
 
 @Getter
-@JsonSerialize(using = TrackingNodeSerializer.class, as=TrackingNode.class)
-public class TrackingNode {
+@JsonSerialize(using = TrackingNodeSerializer.class, as = TrackingNode.class)
+public final class TrackingNode {
     private final Integer timestamp;
     private final String description;
     private final String senderIban;
@@ -26,7 +26,7 @@ public class TrackingNode {
 
     private final Account producer;
 
-    public TrackingNode(TrackingNodeBuilder builder) {
+    public TrackingNode(final TrackingNodeBuilder builder) {
         this.timestamp = builder.timestamp;
         this.description = builder.description;
         this.senderIban = builder.senderIban;
@@ -40,12 +40,12 @@ public class TrackingNode {
         this.seller = builder.seller;
         this.involvedAccounts = builder.involvedAccounts;
         this.currency = builder.currency;
-        this.error= builder.error;
+        this.error = builder.error;
 
         this.producer = builder.producer;
     }
 
-    public static class TrackingNodeBuilder {
+    public static final class TrackingNodeBuilder {
         private Integer timestamp;
         private String description;
         private String senderIban;
@@ -63,81 +63,129 @@ public class TrackingNode {
 
         private Account producer;
 
-        public TrackingNodeBuilder setTimestamp(Integer timestamp) {
-            this.timestamp = timestamp;
+        /**
+         * Builder setter.
+         */
+        public TrackingNodeBuilder setTimestamp(final Integer timestampValue) {
+            this.timestamp = timestampValue;
             return this;
         }
 
-        public TrackingNodeBuilder setDescription(String description) {
-            this.description = description;
+        /**
+         * Builder setter.
+         */
+        public TrackingNodeBuilder setDescription(final String descriptionValue) {
+            this.description = descriptionValue;
             return this;
         }
 
-        public TrackingNodeBuilder setSenderIban(String senderIban) {
-            this.senderIban = senderIban;
+        /**
+         * Builder setter.
+         */
+        public TrackingNodeBuilder setSenderIban(final String senderIbanValue) {
+            this.senderIban = senderIbanValue;
             return this;
         }
 
-        public TrackingNodeBuilder setReceiverIban(String receiverIban) {
-            this.receiverIban = receiverIban;
+        /**
+         * Builder setter.
+         */
+        public TrackingNodeBuilder setReceiverIban(final String receiverIbanValue) {
+            this.receiverIban = receiverIbanValue;
             return this;
         }
 
-        public TrackingNodeBuilder setAmountLiteral(String amountLiteral) {
-            this.amountLiteral = amountLiteral;
+        /**
+         * Builder setter.
+         */
+        public TrackingNodeBuilder setAmountLiteral(final String amountLiteralValue) {
+            this.amountLiteral = amountLiteralValue;
             return this;
         }
 
-        public TrackingNodeBuilder setAmount(double amount) {
-            this.amount = amount;
+        /**
+         * Builder setter.
+         */
+        public TrackingNodeBuilder setAmount(final double amountValue) {
+            this.amount = amountValue;
             return this;
         }
 
-        public TrackingNodeBuilder setTransferType(String transferType) {
-            this.transferType = transferType;
+        /**
+         * Builder setter.
+         */
+        public TrackingNodeBuilder setTransferType(final String transferTypeValue) {
+            this.transferType = transferTypeValue;
             return this;
         }
 
-        public TrackingNodeBuilder setAccount(String account) {
-            this.account = account;
+        /**
+         * Builder setter.
+         */
+        public TrackingNodeBuilder setAccount(final String accountValue) {
+            this.account = accountValue;
             return this;
         }
 
-        public TrackingNodeBuilder setCard(String card) {
-            this.card = card;
+        /**
+         * Builder setter.
+         */
+        public TrackingNodeBuilder setCard(final String cardValue) {
+            this.card = cardValue;
             return this;
         }
 
-        public TrackingNodeBuilder setCardHolder(String cardHolder) {
-            this.cardHolder = cardHolder;
+        /**
+         * Builder setter.
+         */
+        public TrackingNodeBuilder setCardHolder(final String cardHolderValue) {
+            this.cardHolder = cardHolderValue;
             return this;
         }
 
-        public TrackingNodeBuilder setSeller(String seller) {
-            this.seller = seller;
+        /**
+         * Builder setter.
+         */
+        public TrackingNodeBuilder setSeller(final String sellerValue) {
+            this.seller = sellerValue;
             return this;
         }
 
-        public TrackingNodeBuilder setCurrency(String currency) {
-            this.currency = currency;
+        /**
+         * Builder setter.
+         */
+        public TrackingNodeBuilder setCurrency(final String currencyValue) {
+            this.currency = currencyValue;
             return this;
         }
 
-        public TrackingNodeBuilder setError(String error) {
-            this.error = error;
+        /**
+         * Builder setter.
+         */
+        public TrackingNodeBuilder setError(final String errorValue) {
+            this.error = errorValue;
             return this;
         }
 
-        public TrackingNodeBuilder setProducer(Account producer) {
-            this.producer = producer;
+        /**
+         * Builder setter.
+         */
+        public TrackingNodeBuilder setProducer(final Account producerValue) {
+            this.producer = producerValue;
             return this;
         }
 
-        public TrackingNodeBuilder setInvolvedAccounts(List<String> involvedAccounts) {
-            this.involvedAccounts = involvedAccounts;
+        /**
+         * Builder setter.
+         */
+        public TrackingNodeBuilder setInvolvedAccounts(final List<String> involvedAccountsValue) {
+            this.involvedAccounts = involvedAccountsValue;
             return this;
         }
 
+        /**
+         * Builder setter.
+         */
         public TrackingNode build() {
             return new TrackingNode(this);
         }

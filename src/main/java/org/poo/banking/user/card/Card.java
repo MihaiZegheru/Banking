@@ -1,43 +1,43 @@
-package org.poo.banking.user.account;
+package org.poo.banking.user.card;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
+import lombok.Setter;
 import org.poo.banking.transaction.PaymentCollectee;
+import org.poo.banking.user.account.Account;
+import org.poo.banking.user.account.Addable;
 
-public abstract class Card implements Owned, Freezable, PaymentCollectee {
-    @Getter
+@Getter
+public abstract class Card implements Addable, Freezable, PaymentCollectee {
     protected final String cardNumber;
-    @Getter
+    @Setter
     protected String status;
-    @Getter
     @JsonIgnore
     protected final Account owner;
 
-    protected Card(String cardNumber, String status, Account owner) {
+    protected Card(final String cardNumber, final String status, final Account owner) {
         this.cardNumber = cardNumber;
         this.status = status;
         this.owner = owner;
     }
 
-//    public abstract double pay(Account receiver, double amount, String currency);
-
     @Override
-    public void add() {
+    public final void add() {
         owner.addCard(this);
     }
 
     @Override
-    public void remove() {
+    public final void remove() {
         owner.removeCard(this);
     }
 
     @Override
-    public void OnFrozen() {
+    public final void onFrozen() {
         status = "frozen";
     }
 
     @Override
-    public String resolveId() {
+    public final String resolveId() {
         return owner.getIban();
     }
 }

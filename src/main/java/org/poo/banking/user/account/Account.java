@@ -8,22 +8,30 @@ import org.poo.banking.transaction.PaymentCollectee;
 import org.poo.banking.transaction.PaymentReceiver;
 import org.poo.banking.user.User;
 import org.poo.banking.user.account.exception.BalanceNotZeroException;
+import org.poo.banking.user.card.Card;
+import org.poo.banking.user.card.Freezable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public abstract class Account implements SavingsCollector, Owned, Freezable, PaymentCollectee, PaymentReceiver {
+public abstract class Account implements SavingsCollector, Addable, Freezable, PaymentCollectee,
+        PaymentReceiver {
     @Getter
     protected final String type;
+
     @Getter
     @JsonProperty("IBAN")
     protected final String iban;
+
     @Getter
     protected String currency;
+
     @Getter
     @Setter
     protected double balance;
+
     @Getter
-    List<Card> cards = new ArrayList<>();
+    protected final List<Card> cards = new ArrayList<>();
 
     @Setter
     @Getter
@@ -37,7 +45,8 @@ public abstract class Account implements SavingsCollector, Owned, Freezable, Pay
     @JsonIgnore
     protected final User owner;
 
-    protected Account(String type, String iban, String currency, User owner) {
+    protected Account(final String type, final String iban, final String currency,
+                      final User owner) {
         this.type = type;
         this.iban = iban;
         this.currency = currency;
@@ -45,41 +54,44 @@ public abstract class Account implements SavingsCollector, Owned, Freezable, Pay
         this.owner = owner;
     }
 
-    public void addFunds(double amount) {
-        balance += amount;
-    }
-
-    public void addCard(Card card) {
+    /**
+     * Adds a card to the account.
+     */
+    public final void addCard(final Card card) {
         cards.add(card);
     }
 
-    public void removeCard(Card card) {
+    /**
+     * Removes a card from the account.
+     */
+    public final void removeCard(final Card card) {
         cards.remove(card);
     }
 
     @Override
-    public void add() {
-
-    }
-
-    @Override
-    public void remove() throws BalanceNotZeroException {
+    public final void remove() throws BalanceNotZeroException {
         if (balance > 0) {
-            throw new BalanceNotZeroException("Account couldn't be deleted - see org.poo.transactions for details");
+            throw new BalanceNotZeroException("Account couldn't be deleted - "
+                    + "see org.poo.transactions for details");
         }
         cards.clear();
     }
 
     @Override
-    public void OnFrozen() {
+    public final void onFrozen() {
         isFrozen = true;
         for (Card card : cards) {
-            card.status = "frozen";
+            card.setStatus("frozen");
         }
     }
 
     @Override
-    public String resolveId() {
+    public final String resolveId() {
         return iban;
+    }
+
+    @Override
+    public final void add() {
+
     }
 }

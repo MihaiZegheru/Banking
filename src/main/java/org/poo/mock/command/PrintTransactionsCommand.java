@@ -7,11 +7,11 @@ import org.poo.banking.user.User;
 
 import java.util.Optional;
 
-public class PrintTransactionsCommand extends BankingCommand {
+public final class PrintTransactionsCommand extends BankingCommand {
     private final String email;
     private final int timestamp;
 
-    public PrintTransactionsCommand(String command, String email, int timestamp) {
+    public PrintTransactionsCommand(final String command, final String email, final int timestamp) {
         super(command);
         this.email = email;
         this.timestamp = timestamp;
@@ -22,7 +22,6 @@ public class PrintTransactionsCommand extends BankingCommand {
         BankingManager.getInstance().setTime(timestamp);
         Optional<User> userResult = BankingManager.getInstance().getUserByFeature(email);
         if (userResult.isEmpty()) {
-            // TODO: Report issue
             return Optional.empty();
         }
         User user = userResult.get();

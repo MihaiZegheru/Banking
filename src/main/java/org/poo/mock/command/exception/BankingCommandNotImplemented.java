@@ -1,7 +1,7 @@
 package org.poo.mock.command.exception;
 
-public class BankingCommandNotImplemented extends RuntimeException {
-    public BankingCommandNotImplemented(String message) {
+public final class BankingCommandNotImplemented extends RuntimeException {
+    public BankingCommandNotImplemented(final String message) {
         super(message);
     }
 }

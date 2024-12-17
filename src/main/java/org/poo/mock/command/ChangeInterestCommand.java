@@ -5,19 +5,18 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.banking.BankingManager;
 import org.poo.banking.user.User;
 import org.poo.banking.user.account.Account;
-import org.poo.banking.user.account.SavingsAccount;
-import org.poo.banking.user.account.SavingsCollector;
 import org.poo.banking.user.account.exception.AccountIsNotSavingsAccount;
 import org.poo.banking.user.tracking.TrackingNode;
 
 import java.util.Optional;
 
-public class ChangeInterestCommand extends BankingCommand {
+public final class ChangeInterestCommand extends BankingCommand {
     private final String iban;
     private final double interestRate;
     private final int timestamp;
 
-    public ChangeInterestCommand(String command, String iban, double interestRate, int timestamp) {
+    public ChangeInterestCommand(final String command, final String iban, final double interestRate,
+                                 final int timestamp) {
         super(command);
         this.iban = iban;
         this.interestRate = interestRate;
@@ -29,7 +28,6 @@ public class ChangeInterestCommand extends BankingCommand {
         BankingManager.getInstance().setTime(timestamp);
         Optional<User> userResult = BankingManager.getInstance().getUserByFeature(iban);
         if (userResult.isEmpty()) {
-            // TODO: Report issue
             return Optional.empty();
         }
         User user = userResult.get();
@@ -57,7 +55,7 @@ public class ChangeInterestCommand extends BankingCommand {
                 .setTimestamp(timestamp)
                 .setDescription("Interest rate of the account changed to " + interestRate)
                 .setProducer(account);
-        user.getUserTracker().OnInterestRateChanged(trackingBuilder.build());
+        user.getUserTracker().onInterestRateChanged(trackingBuilder.build());
         return Optional.empty();
     }
 }

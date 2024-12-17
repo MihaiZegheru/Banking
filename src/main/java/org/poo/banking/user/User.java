@@ -6,34 +6,37 @@ import lombok.Getter;
 import org.poo.banking.BankingManager;
 import org.poo.banking.exception.ClientAlreadyExists;
 import org.poo.banking.user.account.Account;
-import org.poo.banking.user.account.Card;
+import org.poo.banking.user.card.Card;
 import org.poo.banking.user.account.exception.BalanceNotZeroException;
 import org.poo.banking.user.tracking.FlowTracker;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
 
-public class User {
+public final class User {
     @Getter
-    private String firstName;
+    private final String firstName;
     @Getter
-    private String lastName;
+    private final String lastName;
     @Getter
-    private String email;
-
-    // Users should not have many accounts so it is reasonable to iterate through all when
-    // performing operations.
+    private final String email;
 
     @JsonProperty("accounts")
-    protected final Map<String, Account> ibanToAccount = new LinkedHashMap<>();
-    protected final Map<String, Card> cardNumberToCard = new LinkedHashMap<>();
-    @Getter
-    @JsonIgnore
-    protected final Map<String, String> aliases = new HashMap<>();
-    @Getter
-    @JsonIgnore
-    protected final FlowTracker userTracker = new FlowTracker();
+    private final Map<String, Account> ibanToAccount = new LinkedHashMap<>();
+    private final Map<String, Card> cardNumberToCard = new LinkedHashMap<>();
 
-    public User(String firstName, String lastName, String emailAddr) {
+    @Getter
+    @JsonIgnore
+    private final Map<String, String> aliases = new HashMap<>();
+
+    @Getter
+    @JsonIgnore
+    private final FlowTracker userTracker = new FlowTracker();
+
+    public User(final String firstName, final String lastName, final String emailAddr) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = emailAddr;
@@ -43,7 +46,11 @@ public class User {
         return ibanToAccount.values();
     }
 
-    public void addAccountByIban(Account account) {
+    /**
+     * Adds an account to the user.
+     * @param account to be added
+     */
+    public void addAccountByIban(final Account account) {
         if (ibanToAccount.containsKey(account.getIban())) {
             // TODO: Change exception.
             throw new ClientAlreadyExists();
@@ -53,10 +60,10 @@ public class User {
     }
 
     /**
-     * Removes account and associated cards.
-     * @param iban
+     * Removes account with provided iban and associated cards.
+     * @param iban to be queried and removed
      */
-    public Optional<Account> removeAccountByIban(String iban) throws BalanceNotZeroException {
+    public Optional<Account> removeAccountByIban(final String iban) throws BalanceNotZeroException {
         if (!ibanToAccount.containsKey(iban)) {
             return Optional.empty();
         }
@@ -65,14 +72,23 @@ public class User {
         return Optional.ofNullable(ibanToAccount.remove(iban));
     }
 
-    public Optional<Account> getAccountByIban(String iban) {
+    /**
+     * Returns the user's account with the provided iban.
+     * @param iban to be queried
+     * @return Optional<Account>
+     */
+    public Optional<Account> getAccountByIban(final String iban) {
         if (!ibanToAccount.containsKey(iban)) {
             return Optional.empty();
         }
         return Optional.ofNullable(ibanToAccount.get(iban));
     }
 
-    public void addCardByCardNumber(Card card) {
+    /**
+     * Adds a card to the user.
+     * @param card to be added
+     */
+    public void addCardByCardNumber(final Card card) {
         if (cardNumberToCard.containsKey(card.getCardNumber())) {
             return;
         }
@@ -81,7 +97,12 @@ public class User {
         BankingManager.getInstance().addUserByFeature(card.getCardNumber(), this);
     }
 
-    public Optional<Card> removeCardByCardNumber(String cardNumber) {
+    /**
+     * Removes card with provided cardNumber.
+     * @param cardNumber to be queried and removed
+     * @return Optional<Card>
+     */
+    public Optional<Card> removeCardByCardNumber(final String cardNumber) {
         if (!cardNumberToCard.containsKey(cardNumber)) {
             return Optional.empty();
         }
@@ -90,22 +111,33 @@ public class User {
         return Optional.ofNullable(cardNumberToCard.remove(cardNumber));
     }
 
-    public Optional<Card> getCardByCardNumber(String cardNumber) {
+    /**
+     * Returns the user's card with the provided cardNumber.
+     * @param cardNumber to be queried
+     * @return Optional<Card>
+     */
+    public Optional<Card> getCardByCardNumber(final String cardNumber) {
         if (!cardNumberToCard.containsKey(cardNumber)) {
             return Optional.empty();
         }
         return Optional.ofNullable(cardNumberToCard.get(cardNumber));
     }
 
-    public void addAlias(String alias, String iban) {
+    /**
+     * Associates an alias to an account.
+     * @param alias to be associated
+     * @param iban to be associated with alias
+     */
+    public void addAlias(final String alias, final String iban) {
         aliases.put(alias, iban);
     }
 
-    public Optional<String> removeAlias(String alias) {
-        return Optional.ofNullable(aliases.remove(alias));
-    }
-
-    public String getAlias(String alias) {
+    /**
+     * Returns the iban of the account associated with the alias.
+     * @param alias to be queried
+     * @return String
+     */
+    public String getAlias(final String alias) {
         return aliases.get(alias);
     }
 }

@@ -9,12 +9,13 @@ import org.poo.banking.user.tracking.TrackingNode;
 
 import java.util.Optional;
 
-public class DeleteAccountCommand extends BankingCommand {
+public final class DeleteAccountCommand extends BankingCommand {
     private final String iban;
     private final String email;
     private final int timestamp;
 
-    public DeleteAccountCommand(String command, String iban, String email, int timestamp) {
+    public DeleteAccountCommand(final String command, final String iban, final String email,
+                                final int timestamp) {
         super(command);
         this.iban = iban;
         this.email = email;
@@ -26,7 +27,6 @@ public class DeleteAccountCommand extends BankingCommand {
         BankingManager.getInstance().setTime(timestamp);
         Optional<User> userResult = BankingManager.getInstance().getUserByFeature(email);
         if (userResult.isEmpty()) {
-            // TODO: Report issue.
             return Optional.empty();
         }
         User user = userResult.get();
@@ -46,11 +46,12 @@ public class DeleteAccountCommand extends BankingCommand {
         } catch (BalanceNotZeroException e) {
             outputNode.put("error", e.getMessage());
             outputNode.put("timestamp", timestamp);
-            trackingBuilder.setDescription("Account couldn't be deleted - there are funds remaining");
+            trackingBuilder.setDescription("Account couldn't be deleted - "
+                    + "there are funds remaining");
         } finally {
             objectNode.put("output", outputNode);
         }
-        user.getUserTracker().OnAccountDeleted(trackingBuilder.build());
+        user.getUserTracker().onAccountDeleted(trackingBuilder.build());
         return Optional.of(objectNode);
     }
 }

@@ -5,11 +5,11 @@ import org.poo.banking.currency.ForexGenie;
 import org.poo.banking.user.User;
 import org.poo.banking.user.account.exception.InsufficientFundsException;
 
-public class SavingsAccount extends Account {
+public final class SavingsAccount extends Account {
     private double interestRate;
 
-    public SavingsAccount(String type, String iban, String currency,
-                          double interestRate, User owner) {
+    public SavingsAccount(final String type, final String iban, final String currency,
+                          final double interestRate, final User owner) {
         super(type, iban, currency, owner);
         this.interestRate = interestRate;
     }
@@ -20,31 +20,31 @@ public class SavingsAccount extends Account {
     }
 
     @Override
-    public void setInterestRate(double interestRate) {
+    public void setInterestRate(final double interestRate) {
         this.interestRate = interestRate;
     }
 
     @Override
-    public void ask(double amount, String currency) throws InsufficientFundsException {
+    public void ask(final double amount, final String currency) throws InsufficientFundsException {
         ForexGenie forexGenie = BankingManager.getInstance().getForexGenie();
-        amount = forexGenie.queryRate(currency, this.currency, amount);
-        if (amount > balance) {
+        double newAmount = forexGenie.queryRate(currency, this.currency, amount);
+        if (newAmount > balance) {
             throw new InsufficientFundsException("Insufficient funds");
         }
-        balance -= amount;
+        balance -= newAmount;
     }
 
     @Override
-    public void giveBack(double amount, String currency) {
+    public void giveBack(final double amount, final String currency) {
         ForexGenie forexGenie = BankingManager.getInstance().getForexGenie();
-        amount = forexGenie.queryRate(currency, this.currency, amount);
+        double newAmount = forexGenie.queryRate(currency, this.currency, amount);
         balance += amount;
     }
 
     @Override
-    public void receive(double amount, String currency) {
+    public void receive(final double amount, final String currency) {
         ForexGenie forexGenie = BankingManager.getInstance().getForexGenie();
-        amount = forexGenie.queryRate(currency, this.currency, amount);
-        balance += amount;
+        double newAmount = forexGenie.queryRate(currency, this.currency, amount);
+        balance += newAmount;
     }
 }

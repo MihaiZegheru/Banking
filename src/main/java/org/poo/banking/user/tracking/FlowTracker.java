@@ -1,18 +1,30 @@
 package org.poo.banking.user.tracking;
 
-import com.fasterxml.jackson.databind.ser.std.MapSerializer;
 import lombok.Getter;
 import org.poo.banking.user.account.Account;
 
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 import static java.util.stream.Collectors.groupingBy;
 
 @Getter
-public class FlowTracker implements AccountTracker, TransactionTracker {
-    protected final List<TrackingNode> history = new ArrayList<>();
+public final class FlowTracker implements AccountTracker, TransactionTracker {
+    private final List<TrackingNode> history = new ArrayList<>();
 
-    public List<TrackingNode> generateReport(int startTimestamp, int endTimestamp, Account producer) {
+    /**
+     * Generates an overall report of the producer.
+     * @param startTimestamp starting time frame
+     * @param endTimestamp ending time frame
+     * @param producer tracked account
+     * @return List<TrackingNode>
+     */
+    public List<TrackingNode> generateReport(final int startTimestamp, final int endTimestamp,
+                                             final Account producer) {
         return  history.stream()
                 .filter(node -> startTimestamp <= node.getTimestamp()
                         && node.getTimestamp() <= endTimestamp
@@ -20,8 +32,16 @@ public class FlowTracker implements AccountTracker, TransactionTracker {
                 .toList();
     }
 
-    public List<TrackingNode> generateSpendingsReport(int startTimestamp, int endTimestamp,
-                                                      Account producer) {
+    /**
+     * Generates a spendings only report of the producer.
+     * @param startTimestamp starting time frame
+     * @param endTimestamp ending time frame
+     * @param producer tracked account
+     * @return List<TrackingNode>
+     */
+    public List<TrackingNode> generateSpendingsReport(final int startTimestamp,
+                                                      final int endTimestamp,
+                                                      final Account producer) {
         return  history.stream()
                 .filter(node -> startTimestamp <= node.getTimestamp()
                         && node.getTimestamp() <= endTimestamp
@@ -30,8 +50,16 @@ public class FlowTracker implements AccountTracker, TransactionTracker {
                 .toList();
     }
 
-    public List<SellerTrackingNode> generateSellersReport(int startTimestamp, int endTimestamp,
-                                                          Account producer) {
+    /**
+     * Generates a report with the interactions with sellers of the producer.
+     * @param startTimestamp starting time frame
+     * @param endTimestamp ending time frame
+     * @param producer tracked account
+     * @return List<TrackingNode>
+     */
+    public List<SellerTrackingNode> generateSellersReport(final int startTimestamp,
+                                                          final int endTimestamp,
+                                                          final Account producer) {
         Map<String, List<TrackingNode>> data =
                 history.stream()
                         .filter(node -> startTimestamp <= node.getTimestamp()
@@ -56,37 +84,37 @@ public class FlowTracker implements AccountTracker, TransactionTracker {
     }
 
     @Override
-    public void OnAccountCreated(TrackingNode trackingNode) {
+    public void onAccountCreated(final TrackingNode trackingNode) {
         history.add(trackingNode);
     }
 
     @Override
-    public void OnAccountDeleted(TrackingNode trackingNode) {
+    public void onAccountDeleted(final TrackingNode trackingNode) {
         history.add(trackingNode);
     }
 
     @Override
-    public void OnCardCreated(TrackingNode trackingNode) {
+    public void onCardCreated(final TrackingNode trackingNode) {
         history.add(trackingNode);
     }
 
     @Override
-    public void OnCardDeleted(TrackingNode trackingNode) {
+    public void onCardDeleted(final TrackingNode trackingNode) {
         history.add(trackingNode);
     }
 
     @Override
-    public void OnCardFrozen(TrackingNode trackingNode) {
+    public void onCardFrozen(final TrackingNode trackingNode) {
         history.add(trackingNode);
     }
 
     @Override
-    public void OnInterestRateChanged(TrackingNode trackingNode) {
+    public void onInterestRateChanged(final TrackingNode trackingNode) {
         history.add(trackingNode);
     }
 
     @Override
-    public void OnTransaction(TrackingNode trackingNode) {
+    public void onTransaction(final TrackingNode trackingNode) {
         history.add(trackingNode);
     }
 }

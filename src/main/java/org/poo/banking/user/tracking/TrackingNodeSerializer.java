@@ -2,15 +2,14 @@ package org.poo.banking.user.tracking;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 import java.io.IOException;
 
-public class TrackingNodeSerializer extends JsonSerializer<TrackingNode> {
+public final class TrackingNodeSerializer extends JsonSerializer<TrackingNode> {
     @Override
-    public void serialize(TrackingNode trackingNode, JsonGenerator gen,
-                          SerializerProvider serializerProvider) throws IOException {
+    public void serialize(final TrackingNode trackingNode, final JsonGenerator gen,
+                          final SerializerProvider serializerProvider) throws IOException {
         gen.writeStartObject();
         if (trackingNode.getTimestamp() != null) {
             gen.writeNumberField("timestamp", trackingNode.getTimestamp());

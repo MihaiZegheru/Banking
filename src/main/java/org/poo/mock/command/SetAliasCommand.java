@@ -6,12 +6,13 @@ import org.poo.banking.user.User;
 
 import java.util.Optional;
 
-public class SetAliasCommand extends BankingCommand {
+public final class SetAliasCommand extends BankingCommand {
     private final String email;
     private final String alias;
     private final String iban;
 
-    public SetAliasCommand(String command, String email, String alias, String iban) {
+    public SetAliasCommand(final String command, final String email, final String alias,
+                           final String iban) {
         super(command);
         this.email = email;
         this.alias = alias;
@@ -22,11 +23,9 @@ public class SetAliasCommand extends BankingCommand {
     public Optional<ObjectNode> execute() {
         Optional<User> userResult = BankingManager.getInstance().getUserByFeature(email);
         if (userResult.isEmpty()) {
-            // TODO: Report issue
             return Optional.empty();
         }
         User user = userResult.get();
-
         user.addAlias(alias, iban);
         return Optional.empty();
     }
