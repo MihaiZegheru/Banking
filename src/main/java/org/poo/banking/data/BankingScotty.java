@@ -12,7 +12,7 @@ import java.util.Optional;
 /**
  * This class should only be accessed by implementing BankingScottyFriend interface.
  */
-final class BankingScotty {
+public final class BankingScotty {
     @Getter
     private final Set<User> users = new LinkedHashSet<>();
 
