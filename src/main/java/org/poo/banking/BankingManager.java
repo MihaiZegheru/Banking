@@ -3,6 +3,8 @@ package org.poo.banking;
 import lombok.Getter;
 import lombok.Setter;
 import org.poo.banking.currency.ForexGenie;
+import org.poo.banking.data.BankingScotty;
+import org.poo.banking.data.BankingScottyFriend;
 import org.poo.banking.user.User;
 import org.poo.mock.command.BankingQuerent;
 

@@ -1,4 +1,4 @@
-package org.poo.banking;
+package org.poo.banking.data;
 
 import org.poo.banking.user.User;
 
