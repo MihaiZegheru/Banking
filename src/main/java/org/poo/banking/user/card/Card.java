@@ -5,10 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.poo.banking.transaction.PaymentCollectee;
 import org.poo.banking.user.account.Account;
-import org.poo.banking.user.account.Addable;
 
 @Getter
-public abstract class Card implements Addable, Freezable, PaymentCollectee {
+public abstract class Card implements Freezable, PaymentCollectee {
     protected final String cardNumber;
     @Setter
     protected String status;
@@ -22,17 +21,7 @@ public abstract class Card implements Addable, Freezable, PaymentCollectee {
     }
 
     @Override
-    public final void add() {
-        owner.addCard(this);
-    }
-
-    @Override
-    public final void remove() {
-        owner.removeCard(this);
-    }
-
-    @Override
-    public final void onFrozen() {
+    public final void freeze() {
         status = "frozen";
     }
 

@@ -17,7 +17,17 @@ public final class BankingCommandFactory {
                 return new AddUserCommand(commandInput.getCommand(),
                         commandInput.getFirstName(),
                         commandInput.getLastName(),
-                        commandInput.getEmail());
+                        commandInput.getEmail(),
+                        commandInput.getBirthDate(),
+                        commandInput.getOccupation());
+            }
+            case "addSeller" -> {
+                return new AddSellerCommand(commandInput.getCommand(),
+                        commandInput.getName(),
+                        commandInput.getId(),
+                        commandInput.getAccount(),
+                        commandInput.getType(),
+                        commandInput.getCashbackStrategy());
             }
             case "printUsers" -> {
                 return new PrintUsersCommand(commandInput.getCommand(),
@@ -135,6 +145,19 @@ public final class BankingCommandFactory {
             }
             case "addInterest" -> {
                 return new AddInterestCommand(commandInput.getCommand(),
+                        commandInput.getAccount(),
+                        commandInput.getTimestamp());
+            }
+            case "withdrawSavings" -> {
+                return new WithdrawSavingsCommand(commandInput.getCommand(),
+                        commandInput.getAmount(),
+                        commandInput.getAccount(),
+                        commandInput.getCurrency(),
+                        commandInput.getTimestamp());
+            }
+            case "upgradePlan" -> {
+                return new UpgradePlanCommand(commandInput.getCommand(),
+                        commandInput.getNewPlanType(),
                         commandInput.getAccount(),
                         commandInput.getTimestamp());
             }

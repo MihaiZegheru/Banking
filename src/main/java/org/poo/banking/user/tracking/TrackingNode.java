@@ -22,6 +22,8 @@ public final class TrackingNode {
     private final String seller;
     private final String currency;
     private final String error;
+    private final String newPlanType;
+    private final String accountIban;
     private final List<String> involvedAccounts;
 
     private final Account producer;
@@ -41,6 +43,8 @@ public final class TrackingNode {
         this.involvedAccounts = builder.involvedAccounts;
         this.currency = builder.currency;
         this.error = builder.error;
+        this.newPlanType = builder.newPlanType;
+        this.accountIban = builder.accountIban;
 
         this.producer = builder.producer;
     }
@@ -59,6 +63,8 @@ public final class TrackingNode {
         private String seller;
         private String currency;
         private String error;
+        private String newPlanType;
+        private String accountIban;
         private List<String> involvedAccounts;
 
         private Account producer;
@@ -172,6 +178,22 @@ public final class TrackingNode {
          */
         public TrackingNodeBuilder setProducer(final Account producerValue) {
             this.producer = producerValue;
+            return this;
+        }
+
+        /**
+         * Builder setter.
+         */
+        public TrackingNodeBuilder setNewPlanType(final String newPlanType) {
+            this.newPlanType = newPlanType;
+            return this;
+        }
+
+        /**
+         * Builder setter.
+         */
+        public TrackingNodeBuilder setAccountIban(final String accountIban) {
+            this.accountIban = accountIban;
             return this;
         }
 

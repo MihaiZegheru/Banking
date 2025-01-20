@@ -33,6 +33,7 @@ public final class DisposableCard extends Card {
             throw new InsufficientFundsException("Insufficient funds");
         }
         owner.setBalance(owner.getBalance() - newAmount);
+        owner.getServicePlan().CollectCommission(amount, currency, this);
 
         BankingQuerent bankingQuerent = BankingManager.getInstance().getQuerent();
 
@@ -52,7 +53,7 @@ public final class DisposableCard extends Card {
         CommandInput addCommandInput = new CommandInput();
         addCommandInput.setCommand("createOneTimeCard");
         addCommandInput.setAccount(getOwner().getIban());
-        addCommandInput.setEmail(getOwner().getOwner().getEmail());
+        addCommandInput.setEmail(getOwner().getOwningUser().getEmail());
         addCommandInput.setTimestamp(BankingManager.getInstance().getTime());
         BankingCommand addCommand;
         try {
@@ -65,6 +66,24 @@ public final class DisposableCard extends Card {
     }
 
     @Override
+    public void payCommission(double amount, String currency) {
+        ForexGenie forexGenie = BankingManager.getInstance().getForexGenie();
+        double newAmount = forexGenie.queryRate(currency, owner.getCurrency(), amount);
+        if (Objects.equals(status, "frozen")) {
+            throw new FrozenCardException("The card is frozen");
+        }
+        if (newAmount > owner.getBalance()) {
+            throw new InsufficientFundsException("Insufficient funds");
+        }
+        owner.setBalance(owner.getBalance() - newAmount);
+    }
+
+    @Override
     public void giveBack(final double amount, final String currency) {
+    }
+
+    @Override
+    public Account getAccount() {
+        return getOwner();
     }
 }

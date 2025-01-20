@@ -40,3 +40,4 @@ build/
 result/
 checkstyle.txt
 out.txt
+git_log.txt

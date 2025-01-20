@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.banking.BankingManager;
-import org.poo.fileio.CommandInput;
-import org.poo.fileio.ExchangeInput;
-import org.poo.fileio.ObjectInput;
-import org.poo.fileio.UserInput;
+import org.poo.fileio.*;
 import org.poo.mock.command.BankingCommand;
 import org.poo.mock.command.BankingCommandFactory;
 import org.poo.mock.command.BankingQuerent;
@@ -28,6 +25,7 @@ public final class Mocker {
         // TODO: Separate Jackson logic from commands by returning an output object / exception.
 
         populateUsers(testingInput.getUsers());
+        populateSellers(testingInput.getCommerciants());
         populateCurrencies(testingInput.getExchangeRates());
         ArrayNode arrayNode = runCommands(testingInput.getCommands());
 
@@ -65,6 +63,31 @@ public final class Mocker {
             command.setFirstName(user.getFirstName());
             command.setLastName(user.getLastName());
             command.setEmail(user.getEmail());
+            command.setBirthDate(user.getBirthDate());
+            command.setOccupation(user.getOccupation());
+
+            BankingCommand bankingCommand;
+            try {
+                bankingCommand = BankingCommandFactory.createBankingCommand(command);
+            } catch (BankingCommandNotImplemented e) {
+                System.out.println(e.getMessage());
+                continue;
+            }
+            bankingQuerent.query(bankingCommand);
+        }
+    }
+
+    private static void populateSellers(final CommerciantInput[] testingSellers) {
+        BankingQuerent bankingQuerent = new BankingQuerent();
+
+        for (CommerciantInput seller : testingSellers) {
+            CommandInput command = new CommandInput();
+            command.setCommand("addSeller");
+            command.setName(seller.getCommerciant());
+            command.setId(seller.getId());
+            command.setAccount(seller.getAccount());
+            command.setType(seller.getType());
+            command.setCashbackStrategy(seller.getCashbackStrategy());
 
             BankingCommand bankingCommand;
             try {

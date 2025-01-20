@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.poo.banking.currency.ForexGenie;
 import org.poo.banking.data.BankingScotty;
 import org.poo.banking.data.BankingScottyFriend;
+import org.poo.banking.seller.Seller;
 import org.poo.banking.user.User;
 import org.poo.mock.command.BankingQuerent;
 
@@ -82,5 +83,25 @@ public final class BankingManager implements BankingScottyFriend {
      */
     public Set<User> getUsers() {
         return scotty.getUsers();
+    }
+
+    /**
+     * Add a seller to the database with a feature key.
+     * @param feature seller specific key
+     * @param seller seller object
+     */
+    @Override
+    public void addSellerByFeature(String feature, Seller seller) {
+        scotty.addSellerByFeature(feature, seller);
+    }
+
+    /**
+     * Returns the seller from the database with the provided feature key.
+     * @param feature seller specific key
+     * @return Optional<Seller>
+     */
+    @Override
+    public Optional<Seller> getSellerByFeature(final String feature) {
+        return scotty.getSellerByFeature(feature);
     }
 }

@@ -7,14 +7,14 @@ import lombok.Setter;
 import org.poo.banking.transaction.PaymentCollectee;
 import org.poo.banking.transaction.PaymentReceiver;
 import org.poo.banking.user.User;
-import org.poo.banking.user.account.exception.BalanceNotZeroException;
 import org.poo.banking.user.card.Card;
-import org.poo.banking.user.card.Freezable;
+import org.poo.banking.user.serviceplan.ServicePlan;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-public abstract class Account implements SavingsCollector, Addable, Freezable, PaymentCollectee,
+public abstract class Account implements SavingsCollector, PaymentCollectee,
         PaymentReceiver {
     @Getter
     protected final String type;
@@ -38,20 +38,28 @@ public abstract class Account implements SavingsCollector, Addable, Freezable, P
     @JsonIgnore
     protected double minBalance;
 
-    @Setter
-    protected boolean isFrozen = false;
-
     @Getter
     @JsonIgnore
-    protected final User owner;
+    protected final User owningUser;
+
+    @Getter
+    @Setter
+    @JsonIgnore
+    protected ServicePlan servicePlan;
+
+    @Getter
+    @Setter
+    @JsonIgnore
+    protected double spending;
 
     protected Account(final String type, final String iban, final String currency,
-                      final User owner) {
+                      final User owner, final ServicePlan servicePlan) {
         this.type = type;
         this.iban = iban;
         this.currency = currency;
         this.balance = 0;
-        this.owner = owner;
+        this.owningUser = owner;
+        this.servicePlan = servicePlan;
     }
 
     /**
@@ -69,29 +77,12 @@ public abstract class Account implements SavingsCollector, Addable, Freezable, P
     }
 
     @Override
-    public final void remove() throws BalanceNotZeroException {
-        if (balance > 0) {
-            throw new BalanceNotZeroException("Account couldn't be deleted - "
-                    + "see org.poo.transactions for details");
-        }
-        cards.clear();
-    }
-
-    @Override
-    public final void onFrozen() {
-        isFrozen = true;
-        for (Card card : cards) {
-            card.setStatus("frozen");
-        }
-    }
-
-    @Override
     public final String resolveId() {
         return iban;
     }
 
     @Override
-    public final void add() {
-
+    public Account getAccount() {
+        return this;
     }
 }

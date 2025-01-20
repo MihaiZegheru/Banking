@@ -23,6 +23,12 @@ public final class User {
     private final String lastName;
     @Getter
     private final String email;
+    @JsonIgnore
+    @Getter
+    private final String birthDate;
+    @JsonIgnore
+    @Getter
+    private final String occupation;
 
     @JsonProperty("accounts")
     private final Map<String, Account> ibanToAccount = new LinkedHashMap<>();
@@ -36,10 +42,13 @@ public final class User {
     @JsonIgnore
     private final FlowTracker userTracker = new FlowTracker();
 
-    public User(final String firstName, final String lastName, final String emailAddr) {
+    public User(final String firstName, final String lastName, final String emailAddr,
+                final String birthData, final String occupation) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = emailAddr;
+        this.birthDate = birthData;
+        this.occupation = occupation;
     }
 
     public Collection<Account> getAccounts() {
@@ -68,7 +77,10 @@ public final class User {
             return Optional.empty();
         }
         Account account = ibanToAccount.get(iban);
-        account.remove();
+        if (account.getBalance() > 0) {
+            throw new BalanceNotZeroException("Account couldn't be deleted - "
+                    + "see org.poo.transactions for details");
+        }
         return Optional.ofNullable(ibanToAccount.remove(iban));
     }
 
@@ -93,7 +105,7 @@ public final class User {
             return;
         }
         cardNumberToCard.put(card.getCardNumber(), card);
-        card.add();
+        card.getOwner().addCard(card);
         BankingManager.getInstance().addUserByFeature(card.getCardNumber(), this);
     }
 
@@ -107,7 +119,7 @@ public final class User {
             return Optional.empty();
         }
         Card card = cardNumberToCard.get(cardNumber);
-        card.remove();
+        card.getOwner().removeCard(card);
         return Optional.ofNullable(cardNumberToCard.remove(cardNumber));
     }
 

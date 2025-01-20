@@ -1,6 +1,7 @@
 package org.poo.banking.data;
 
 import lombok.Getter;
+import org.poo.banking.seller.Seller;
 import org.poo.banking.user.User;
 
 import java.util.HashMap;
@@ -15,8 +16,10 @@ import java.util.Optional;
 public final class BankingScotty {
     @Getter
     private final Set<User> users = new LinkedHashSet<>();
-
     private final Map<String, User> featureToUser = new HashMap<>();
+
+    private final Set<Seller> sellers = new LinkedHashSet<>();
+    private final Map<String, Seller> featureToSeller = new HashMap<>();
 
     /**
      * Add a user with a feature key.
@@ -50,5 +53,30 @@ public final class BankingScotty {
      */
     public Optional<User> removeFeature(final String feature) {
         return Optional.ofNullable(featureToUser.remove(feature));
+    }
+
+    /**
+     * Adds a seller with a feature key.
+     * @param feature seller specific key
+     * @param seller seller object
+     */
+    public void addSellerByFeature(final String feature, final Seller seller) {
+        sellers.add(seller);
+        if (featureToSeller.containsKey(feature)) {
+            return;
+        }
+        featureToSeller.put(feature, seller);
+    }
+
+    /**
+     * Returns the seller from the database with the provided feature key.
+     * @param feature seller specific key
+     * @return Optional<Seller>
+     */
+    public Optional<Seller> getSellerByFeature(final String feature) {
+        if (!featureToSeller.containsKey(feature)) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(featureToSeller.get(feature));
     }
 }

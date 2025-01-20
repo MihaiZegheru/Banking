@@ -50,6 +50,12 @@ public final class TrackingNodeSerializer extends JsonSerializer<TrackingNode> {
         if (trackingNode.getError() != null) {
             gen.writeStringField("error", trackingNode.getError());
         }
+        if (trackingNode.getNewPlanType() != null) {
+            gen.writeStringField("newPlanType", trackingNode.getNewPlanType());
+        }
+        if (trackingNode.getAccountIban() != null) {
+            gen.writeStringField("accountIBAN", trackingNode.getAccountIban());
+        }
         if (trackingNode.getInvolvedAccounts() != null) {
             gen.writeObjectField("involvedAccounts", trackingNode.getInvolvedAccounts());
         }

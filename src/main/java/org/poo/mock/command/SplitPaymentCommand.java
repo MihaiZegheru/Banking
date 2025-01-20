@@ -65,7 +65,7 @@ public final class SplitPaymentCommand extends BankingCommand {
             trackingBuilder.setError(e.getMessage());
         } finally {
             for (Account account : accounts) {
-                account.getOwner().getUserTracker().onTransaction(trackingBuilder
+                account.getOwningUser().getUserTracker().onTransaction(trackingBuilder
                         .setProducer(account)
                         .build());
             }

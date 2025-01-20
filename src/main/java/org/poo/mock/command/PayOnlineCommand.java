@@ -4,15 +4,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.banking.BankingManager;
 import org.poo.banking.currency.ForexGenie;
+import org.poo.banking.seller.Seller;
 import org.poo.banking.transaction.TransactionTable;
 import org.poo.banking.transaction.ZeroPaymentReceiver;
 import org.poo.banking.user.User;
+import org.poo.banking.user.account.Account;
 import org.poo.banking.user.card.Card;
 import org.poo.banking.user.account.exception.FrozenCardException;
 import org.poo.banking.user.account.exception.InsufficientFundsException;
 import org.poo.banking.user.account.exception.MinimumBalanceReachedException;
 import org.poo.banking.user.tracking.TrackingNode;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public final class PayOnlineCommand extends BankingCommand {
@@ -20,19 +23,19 @@ public final class PayOnlineCommand extends BankingCommand {
     private final double amount;
     private final String currency;
     private final String description;
-    private final String seller;
+    private final String sellerName;
     private final String email;
     private final int timestamp;
 
     public PayOnlineCommand(final String command, final String cardNumber, final double amount,
-                            final String currency, final String description, final String seller,
+                            final String currency, final String description, final String sellerName,
                             final String email, final int timestamp) {
         super(command);
         this.cardNumber = cardNumber;
         this.amount = amount;
         this.currency = currency;
         this.description = description;
-        this.seller = seller;
+        this.sellerName = sellerName;
         this.email = email;
         this.timestamp = timestamp;
     }
@@ -62,6 +65,12 @@ public final class PayOnlineCommand extends BankingCommand {
         }
         Card card = cardResult.get();
 
+        Optional<Seller> sellerResult = BankingManager.getInstance().getSellerByFeature(sellerName);
+        if (sellerResult.isEmpty()) {
+            return Optional.empty();
+        }
+        Seller seller = sellerResult.get();
+
         TrackingNode.TrackingNodeBuilder trackingBuilder = new TrackingNode.TrackingNodeBuilder()
                 .setTimestamp(timestamp)
                 .setProducer(card.getOwner());
@@ -73,8 +82,17 @@ public final class PayOnlineCommand extends BankingCommand {
             double convertedPaidAmount = forexGenie.queryRate(currency,
                     card.getOwner().getCurrency(), amount);
             trackingBuilder.setAmount(convertedPaidAmount)
-                    .setSeller(seller)
+                    .setSeller(sellerName)
                     .setDescription("Card payment");
+
+            // Handle Cashback adding
+            Account account = card.getOwner();
+            if (Objects.equals(seller.getCashbackStrategy(), "nrOfTransactions")) {
+//                account.setNumberOfTransactions(account.getNumberOfTransactions() + 1);
+            } else if (Objects.equals(seller.getCashbackStrategy(), "spendingThreshold")) {
+                account.getServicePlan().HandleCashbackForSpending(convertedPaidAmount,
+                        account.getCurrency(), account);
+            }
         } catch (InsufficientFundsException
                  | MinimumBalanceReachedException
                  | FrozenCardException e) {
