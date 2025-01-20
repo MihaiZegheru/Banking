@@ -4,16 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.banking.BankingManager;
 import org.poo.banking.currency.ForexGenie;
-import org.poo.banking.transaction.TransactionTable;
-import org.poo.banking.transaction.ZeroPaymentReceiver;
 import org.poo.banking.user.User;
 import org.poo.banking.user.account.Account;
-import org.poo.banking.user.account.exception.FrozenCardException;
 import org.poo.banking.user.account.exception.InsufficientFundsException;
 import org.poo.banking.user.card.Card;
 import org.poo.banking.user.tracking.TrackingNode;
 
-import java.util.Objects;
 import java.util.Optional;
 
 public final class CashWithdrawalCommand extends BankingCommand {
@@ -23,8 +19,8 @@ public final class CashWithdrawalCommand extends BankingCommand {
     private final String location;
     private final int timestamp;
 
-    public CashWithdrawalCommand(String command, String cardNumber, double amount, String email,
-                                 String location, int timestamp) {
+    public CashWithdrawalCommand(final String command, final String cardNumber, final double amount,
+                                 final String email, final String location, final int timestamp) {
         super(command);
         this.cardNumber = cardNumber;
         this.amount = amount;
@@ -69,7 +65,7 @@ public final class CashWithdrawalCommand extends BankingCommand {
                 throw new InsufficientFundsException("Insufficient funds");
             }
             account.setBalance(account.getBalance() - newAmount);
-            account.getOwningUser().getServicePlan().CollectCommission(amount, "RON", card);
+            account.getOwningUser().getServicePlan().collectCommission(amount, "RON", card);
 
             user.getUserTracker().onCashWithdrawal(trackingBuilder
                     .setAmount(amount)

@@ -28,8 +28,8 @@ public final class PayOnlineCommand extends BankingCommand {
     private final int timestamp;
 
     public PayOnlineCommand(final String command, final String cardNumber, final double amount,
-                            final String currency, final String description, final String sellerName,
-                            final String email, final int timestamp) {
+                            final String currency, final String description,
+                            final String sellerName, final String email, final int timestamp) {
         super(command);
         this.cardNumber = cardNumber;
         this.amount = amount;
@@ -88,13 +88,12 @@ public final class PayOnlineCommand extends BankingCommand {
                     .setSeller(sellerName)
                     .setDescription("Card payment");
 
-            // Handle Cashback adding
             Account account = card.getOwner();
-            if (Objects.equals(seller.getCashbackStrategy(), "nrOfTransactions")) {
-//                account.setNumberOfTransactions(account.getNumberOfTransactions() + 1);
-            } else if (Objects.equals(seller.getCashbackStrategy(), "spendingThreshold")) {
-                account.getOwningUser().getServicePlan().HandleCashbackForSpending(convertedPaidAmount,
-                        account.getCurrency(), account);
+            if (Objects.equals(seller.getCashbackStrategy(), "spendingThreshold")) {
+                account.getOwningUser().getServicePlan().handleCashbackForSpending(
+                        convertedPaidAmount,
+                        account.getCurrency(),
+                        account);
             }
         } catch (InsufficientFundsException
                  | MinimumBalanceReachedException

@@ -2,7 +2,6 @@ package org.poo.mock.command;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.banking.BankingManager;
-import org.poo.banking.currency.ForexGenie;
 import org.poo.banking.transaction.TransactionTable;
 import org.poo.banking.user.User;
 import org.poo.banking.user.account.Account;
@@ -19,8 +18,10 @@ public final class WithdrawSavingsCommand extends BankingCommand {
     private final String currency;
     private final int timestamp;
 
-    public WithdrawSavingsCommand(final String command, final double amount, final String iban, String currency,
-                                  final int timestamp) {
+    private final int ageLimit = 21;
+
+    public WithdrawSavingsCommand(final String command, final double amount, final String iban,
+                                  final String currency, final int timestamp) {
         super(command);
         this.amount = amount;
         this.iban = iban;
@@ -64,7 +65,7 @@ public final class WithdrawSavingsCommand extends BankingCommand {
             return Optional.empty();
         }
         if (java.time.temporal.ChronoUnit.YEARS.between(LocalDate.now(),
-                LocalDate.parse(user.getBirthDate())) < 21) {
+                LocalDate.parse(user.getBirthDate())) < ageLimit) {
             user.getUserTracker().onTransaction(trackingBuilder
                     .setDescription("You don't have the minimum age required.")
                     .build());

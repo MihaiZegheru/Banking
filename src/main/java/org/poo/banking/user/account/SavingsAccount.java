@@ -4,7 +4,6 @@ import org.poo.banking.BankingManager;
 import org.poo.banking.currency.ForexGenie;
 import org.poo.banking.user.User;
 import org.poo.banking.user.account.exception.InsufficientFundsException;
-import org.poo.banking.user.serviceplan.ServicePlan;
 
 public final class SavingsAccount extends Account {
     private double interestRate;
@@ -35,11 +34,11 @@ public final class SavingsAccount extends Account {
             throw new InsufficientFundsException("Insufficient funds");
         }
         balance -= newAmount;
-        owningUser.getServicePlan().CollectCommission(amount, currency, this);
+        owningUser.getServicePlan().collectCommission(amount, currency, this);
     }
 
     @Override
-    public void payCommission(double amount, String currency) {
+    public void payCommission(final double amount, final String currency) {
         ForexGenie forexGenie = BankingManager.getInstance().getForexGenie();
         double newAmount = forexGenie.queryRate(currency, this.currency, amount);
         if (newAmount > balance) {

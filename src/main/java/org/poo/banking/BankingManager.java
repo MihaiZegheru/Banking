@@ -91,7 +91,7 @@ public final class BankingManager implements BankingScottyFriend {
      * @param seller seller object
      */
     @Override
-    public void addSellerByFeature(String feature, Seller seller) {
+    public void addSellerByFeature(final String feature, final Seller seller) {
         scotty.addSellerByFeature(feature, seller);
     }
 

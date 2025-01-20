@@ -14,7 +14,8 @@ public class Seller {
     @Getter
     private final String cashbackStrategy;
 
-    public Seller(String name, int id, String iban, String type, String cashbackStrategy) {
+    public Seller(final String name, final int id, final String iban, final String type,
+                  final String cashbackStrategy) {
         this.name = name;
         this.id = id;
         this.iban = iban;

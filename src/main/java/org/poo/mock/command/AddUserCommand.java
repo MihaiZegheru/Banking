@@ -7,7 +7,6 @@ import org.poo.banking.user.serviceplan.ServicePlan;
 import org.poo.banking.user.serviceplan.StandardServicePlan;
 import org.poo.banking.user.serviceplan.StudentServicePlan;
 
-import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -19,7 +18,7 @@ public final class AddUserCommand extends BankingCommand {
     private final String occupation;
 
     public AddUserCommand(final String command, final String firstName, final String lastname,
-                          final String email, String birthDate, String occupation) {
+                          final String email, final String birthDate, final String occupation) {
         super(command);
         this.firstName = firstName;
         this.lastname = lastname;

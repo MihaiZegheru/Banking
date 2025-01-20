@@ -24,16 +24,13 @@ public final class ClassicCard extends Card {
             throw new InsufficientFundsException("Insufficient funds");
         }
         owner.setBalance(owner.getBalance() - newAmount);
-        owner.getOwningUser().getServicePlan().CollectCommission(amount, currency, this);
+        owner.getOwningUser().getServicePlan().collectCommission(amount, currency, this);
     }
 
     @Override
-    public void payCommission(double amount, String currency) {
+    public void payCommission(final double amount, final String currency) {
         ForexGenie forexGenie = BankingManager.getInstance().getForexGenie();
         double newAmount = forexGenie.queryRate(currency, owner.getCurrency(), amount);
-//        if (Objects.equals(status, "frozen")) {
-//            throw new FrozenCardException("The card is frozen");
-//        }
         if (newAmount > owner.getBalance()) {
             throw new InsufficientFundsException("Insufficient funds");
         }

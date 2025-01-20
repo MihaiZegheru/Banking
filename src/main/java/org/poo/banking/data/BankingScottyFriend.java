@@ -16,5 +16,5 @@ public interface BankingScottyFriend {
     Collection<User> getUsers();
 
     void addSellerByFeature(String feature, Seller seller);
-    public Optional<Seller> getSellerByFeature(final String feature);
+    Optional<Seller> getSellerByFeature(String feature);
 }

@@ -8,10 +8,8 @@ import org.poo.banking.transaction.PaymentCollectee;
 import org.poo.banking.transaction.PaymentReceiver;
 import org.poo.banking.user.User;
 import org.poo.banking.user.card.Card;
-import org.poo.banking.user.serviceplan.ServicePlan;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public abstract class Account implements SavingsCollector, PaymentCollectee,
@@ -75,6 +73,9 @@ public abstract class Account implements SavingsCollector, PaymentCollectee,
         return iban;
     }
 
+    /**
+     * Get reference to self for Collectee.
+     */
     @Override
     public Account getAccount() {
         return this;

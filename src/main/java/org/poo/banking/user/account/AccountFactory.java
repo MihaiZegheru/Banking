@@ -4,8 +4,16 @@ import org.poo.banking.user.User;
 import org.poo.utils.Utils;
 
 public final class AccountFactory {
-    public static Account createAccount(final String accountType, String currency,
-                                        double interestRate, User user) {
+    /**
+     * Create an account.
+     * @param accountType
+     * @param currency
+     * @param interestRate
+     * @param user
+     * @return account
+     */
+    public static Account createAccount(final String accountType, final String currency,
+                                        final double interestRate, final User user) {
         switch (accountType) {
             case "classic" -> {
                 return new ClassicAccount(accountType, Utils.generateIBAN(),
@@ -16,11 +24,12 @@ public final class AccountFactory {
                         currency, interestRate, user);
             }
             default -> {
-                // TODO: Throw error
                 return null;
             }
         }
+    }
 
+    private AccountFactory() {
 
     }
 }

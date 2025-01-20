@@ -184,16 +184,16 @@ public final class TrackingNode {
         /**
          * Builder setter.
          */
-        public TrackingNodeBuilder setNewPlanType(final String newPlanType) {
-            this.newPlanType = newPlanType;
+        public TrackingNodeBuilder setNewPlanType(final String newPlanTypeValue) {
+            this.newPlanType = newPlanTypeValue;
             return this;
         }
 
         /**
          * Builder setter.
          */
-        public TrackingNodeBuilder setAccountIban(final String accountIban) {
-            this.accountIban = accountIban;
+        public TrackingNodeBuilder setAccountIban(final String accountIbanValue) {
+            this.accountIban = accountIbanValue;
             return this;
         }
 

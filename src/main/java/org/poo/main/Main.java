@@ -63,8 +63,6 @@ public final class Main {
         Checker.calculateScore();
     }
 
-    private static int testNum = 1;
-
     /**
      * @param filePath1 for input file
      * @param filePath2 for output file
@@ -76,8 +74,7 @@ public final class Main {
         File file = new File(CheckerConstants.TESTS_PATH + filePath1);
         ObjectInput inputData = objectMapper.readValue(file, ObjectInput.class);
         Utils.resetRandom();
-        System.out.println("--------------TEST " + testNum + "---------------");
-        testNum++;
+
         ArrayNode output = Mocker.mock(inputData);
 
         ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();

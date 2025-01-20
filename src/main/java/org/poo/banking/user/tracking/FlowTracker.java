@@ -114,7 +114,7 @@ public final class FlowTracker implements AccountTracker, TransactionTracker {
     }
 
     @Override
-    public void onPlanUpgraded(TrackingNode trackingNode) {
+    public void onPlanUpgraded(final TrackingNode trackingNode) {
         history.add(trackingNode);
     }
 
