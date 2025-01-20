@@ -18,6 +18,12 @@ public class StudentServicePlan extends ServicePlan {
     protected final double toGold = 350;
 
     @Override
+    public void CollectCommission(double transactionAmount, String currency,
+                                  PaymentCollectee collectee) {
+        collectee.payCommission(transactionAmount * commission, currency);
+    }
+
+    @Override
     public void HandleCashbackForSpending(double transactionAmount, String currency, PaymentCollectee collectee) {
         ForexGenie forexGenie = BankingManager.getInstance().getForexGenie();
         Account account = collectee.getAccount();

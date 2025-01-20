@@ -31,9 +31,9 @@ public final class ClassicCard extends Card {
     public void payCommission(double amount, String currency) {
         ForexGenie forexGenie = BankingManager.getInstance().getForexGenie();
         double newAmount = forexGenie.queryRate(currency, owner.getCurrency(), amount);
-        if (Objects.equals(status, "frozen")) {
-            throw new FrozenCardException("The card is frozen");
-        }
+//        if (Objects.equals(status, "frozen")) {
+//            throw new FrozenCardException("The card is frozen");
+//        }
         if (newAmount > owner.getBalance()) {
             throw new InsufficientFundsException("Insufficient funds");
         }

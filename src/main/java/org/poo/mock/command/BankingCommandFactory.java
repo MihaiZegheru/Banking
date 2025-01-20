@@ -161,6 +161,14 @@ public final class BankingCommandFactory {
                         commandInput.getAccount(),
                         commandInput.getTimestamp());
             }
+            case "cashWithdrawal" -> {
+                return new CashWithdrawalCommand(commandInput.getCommand(),
+                        commandInput.getCardNumber(),
+                        commandInput.getAmount(),
+                        commandInput.getEmail(),
+                        commandInput.getLocation(),
+                        commandInput.getTimestamp());
+            }
             default -> throw new BankingCommandNotImplemented(
                     "BankingCommand "
                     + commandInput.getCommand()
