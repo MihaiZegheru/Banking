@@ -33,7 +33,7 @@ public final class DisposableCard extends Card {
             throw new InsufficientFundsException("Insufficient funds");
         }
         owner.setBalance(owner.getBalance() - newAmount);
-        owner.getServicePlan().CollectCommission(amount, currency, this);
+        owner.getOwningUser().getServicePlan().CollectCommission(amount, currency, this);
 
         BankingQuerent bankingQuerent = BankingManager.getInstance().getQuerent();
 

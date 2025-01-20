@@ -3,11 +3,13 @@ package org.poo.banking.user;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.Setter;
 import org.poo.banking.BankingManager;
 import org.poo.banking.exception.ClientAlreadyExists;
 import org.poo.banking.user.account.Account;
 import org.poo.banking.user.card.Card;
 import org.poo.banking.user.account.exception.BalanceNotZeroException;
+import org.poo.banking.user.serviceplan.ServicePlan;
 import org.poo.banking.user.tracking.FlowTracker;
 
 import java.util.Collection;
@@ -42,13 +44,19 @@ public final class User {
     @JsonIgnore
     private final FlowTracker userTracker = new FlowTracker();
 
+    @Getter
+    @Setter
+    @JsonIgnore
+    protected ServicePlan servicePlan;
+
     public User(final String firstName, final String lastName, final String emailAddr,
-                final String birthData, final String occupation) {
+                final String birthData, final String occupation, final ServicePlan servicePlan) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = emailAddr;
         this.birthDate = birthData;
         this.occupation = occupation;
+        this.servicePlan = servicePlan;
     }
 
     public Collection<Account> getAccounts() {

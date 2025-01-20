@@ -10,14 +10,16 @@ public final class SavingsAccount extends Account {
     private double interestRate;
 
     public SavingsAccount(final String type, final String iban, final String currency,
-                          final double interestRate, final User owner, final ServicePlan servicePlan) {
-        super(type, iban, currency, owner, servicePlan);
+                          final double interestRate, final User owner) {
+        super(type, iban, currency, owner);
         this.interestRate = interestRate;
     }
 
     @Override
-    public void collect() {
-        balance += interestRate * balance;
+    public double collect() {
+        double amount = interestRate * balance;
+        balance += amount;
+        return amount;
     }
 
     @Override
@@ -33,7 +35,7 @@ public final class SavingsAccount extends Account {
             throw new InsufficientFundsException("Insufficient funds");
         }
         balance -= newAmount;
-        servicePlan.CollectCommission(amount, currency, this);
+        owningUser.getServicePlan().CollectCommission(amount, currency, this);
     }
 
     @Override

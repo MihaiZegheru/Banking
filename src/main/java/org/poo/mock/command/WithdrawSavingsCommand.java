@@ -47,22 +47,28 @@ public final class WithdrawSavingsCommand extends BankingCommand {
                 new TrackingNode.TrackingNodeBuilder()
                         .setTimestamp(timestamp)
                         .setProducer(savingsAccount);
+
+        Account destinationAccount = null;
+        for (Account account : user.getAccounts()) {
+            if (!Objects.equals(account.getCurrency(), currency)
+                    || !Objects.equals(account.getType(), "classic")) {
+                continue;
+            }
+            destinationAccount = account;
+        }
+
+        if (destinationAccount == null) {
+            user.getUserTracker().onTransaction(trackingBuilder
+                    .setDescription("You do not have a classic account.")
+                    .build());
+            return Optional.empty();
+        }
         if (java.time.temporal.ChronoUnit.YEARS.between(LocalDate.now(),
                 LocalDate.parse(user.getBirthDate())) < 21) {
             user.getUserTracker().onTransaction(trackingBuilder
                     .setDescription("You don't have the minimum age required.")
                     .build());
-        }
-
-        Account destinationAccount = null;
-        for (Account account : user.getAccounts()) {
-            if (!Objects.equals(account.getCurrency(), currency)) {
-                continue;
-            }
-            destinationAccount = account;
-        }
-        if (destinationAccount == null) {
-            // throw error
+            return Optional.empty();
         }
 
         TransactionTable transaction = new TransactionTable(savingsAccount, destinationAccount,

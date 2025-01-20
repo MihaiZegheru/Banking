@@ -1,5 +1,6 @@
 package org.poo.mock.command;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.banking.BankingManager;
 import org.poo.banking.currency.ForexGenie;
@@ -31,9 +32,19 @@ public final class SendMoneyCommand extends BankingCommand {
     @Override
     public Optional<ObjectNode> execute() {
         BankingManager.getInstance().setTime(timestamp);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode objectNode = objectMapper.createObjectNode();
+        objectNode.put("command", command);
+        objectNode.put("timestamp", timestamp);
+        ObjectNode outputNode = objectMapper.createObjectNode();
+
         Optional<User> senderUserResult = BankingManager.getInstance().getUserByFeature(iban);
         if (senderUserResult.isEmpty()) {
-            return Optional.empty();
+            outputNode.put("description", "User not found");
+            outputNode.put("timestamp", timestamp);
+            objectNode.put("output", outputNode);
+            return Optional.of(objectNode);
         }
         User senderUser = senderUserResult.get();
         Optional<Account> senderAccountResult = senderUser.getAccountByIban(iban);
@@ -49,7 +60,10 @@ public final class SendMoneyCommand extends BankingCommand {
         Optional<User> receiverUserResult =
                 BankingManager.getInstance().getUserByFeature(receiverIban);
         if (receiverUserResult.isEmpty()) {
-            return Optional.empty();
+            outputNode.put("description", "User not found");
+            outputNode.put("timestamp", timestamp);
+            objectNode.put("output", outputNode);
+            return Optional.of(objectNode);
         }
         User receiverUser = receiverUserResult.get();
         Optional<Account> receiverAccountResult = receiverUser.getAccountByIban(receiverIban);

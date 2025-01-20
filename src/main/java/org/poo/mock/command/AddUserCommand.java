@@ -3,8 +3,12 @@ package org.poo.mock.command;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.poo.banking.BankingManager;
 import org.poo.banking.user.User;
+import org.poo.banking.user.serviceplan.ServicePlan;
+import org.poo.banking.user.serviceplan.StandardServicePlan;
+import org.poo.banking.user.serviceplan.StudentServicePlan;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.Optional;
 
 public final class AddUserCommand extends BankingCommand {
@@ -26,8 +30,15 @@ public final class AddUserCommand extends BankingCommand {
 
     @Override
     public Optional<ObjectNode> execute() {
+        ServicePlan servicePlan;
+        if (Objects.equals(occupation, "student")) {
+            servicePlan = new StudentServicePlan();
+        } else {
+            servicePlan = new StandardServicePlan();
+        }
+
         BankingManager.getInstance().addUserByFeature(email, new User(firstName, lastname, email,
-                birthDate, occupation));
+                birthDate, occupation, servicePlan));
         return Optional.empty();
     }
 }

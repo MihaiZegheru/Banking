@@ -6,6 +6,7 @@ import org.poo.banking.BankingManager;
 import org.poo.banking.user.User;
 import org.poo.banking.user.account.Account;
 import org.poo.banking.user.account.exception.AccountIsNotSavingsAccount;
+import org.poo.banking.user.tracking.TrackingNode;
 
 import java.util.Optional;
 
@@ -34,8 +35,18 @@ public final class AddInterestCommand extends BankingCommand {
         }
         Account account = accountResult.get();
 
+        TrackingNode.TrackingNodeBuilder trackingBuilder =
+                new TrackingNode.TrackingNodeBuilder()
+                        .setTimestamp(timestamp)
+                        .setProducer(account);
         try {
-            account.collect();
+            double amount = account.collect();
+            user.getUserTracker().onTransaction(trackingBuilder
+                    .setAmount(amount)
+                    .setCurrency(account.getCurrency())
+                    .setDescription("Interest rate income")
+                    .build());
+
         } catch (AccountIsNotSavingsAccount e) {
             ObjectMapper objectMapper = new ObjectMapper();
             ObjectNode objectNode = objectMapper.createObjectNode();

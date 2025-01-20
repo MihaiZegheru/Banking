@@ -35,7 +35,7 @@ public final class UpgradePlanCommand extends BankingCommand {
         }
         Account account = accountResult.get();
 
-        account.getServicePlan().UpgradePlan(account, newPlanType);
+        account.getOwningUser().getServicePlan().UpgradePlan(account, newPlanType);
         user.getUserTracker().onPlanUpgraded(new TrackingNode.TrackingNodeBuilder()
                 .setDescription("Upgrade plan")
                 .setAccountIban(iban)

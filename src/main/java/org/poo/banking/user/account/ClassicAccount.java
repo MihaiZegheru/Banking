@@ -9,8 +9,8 @@ import org.poo.banking.user.serviceplan.ServicePlan;
 
 public final class ClassicAccount extends Account {
     public ClassicAccount(final String type, final String iban, final String currency,
-                          final User owner, final ServicePlan servicePlan) {
-        super(type, iban, currency, owner, servicePlan);
+                          final User owner) {
+        super(type, iban, currency, owner);
     }
 
     @Override
@@ -21,7 +21,7 @@ public final class ClassicAccount extends Account {
             throw new InsufficientFundsException("Insufficient funds");
         }
         balance -= newAmount;
-        servicePlan.CollectCommission(amount, currency, this);
+        owningUser.getServicePlan().CollectCommission(amount, currency, this);
     }
 
     @Override
@@ -42,7 +42,7 @@ public final class ClassicAccount extends Account {
     }
 
     @Override
-    public void collect() throws AccountIsNotSavingsAccount {
+    public double collect() throws AccountIsNotSavingsAccount {
         throw new AccountIsNotSavingsAccount("This is not a savings account");
     }
 

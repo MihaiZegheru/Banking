@@ -51,9 +51,12 @@ public class SilverServicePlan extends ServicePlan {
     public void UpgradePlan(Account account, String newPlanType) {
         ForexGenie forexGenie = BankingManager.getInstance().getForexGenie();
         if (Objects.equals(newPlanType, "gold")) {
-            account.setBalance(account.getBalance() - forexGenie.queryRate("RON",
-                    account.getCurrency(), toGold));
-            account.setServicePlan(new GoldServicePlan());
+            double price = forexGenie.queryRate("RON", account.getCurrency(), toGold);
+            if (account.getBalance() - price < 0) {
+                return;
+            }
+            account.setBalance(account.getBalance() - price);
+            account.getOwningUser().setServicePlan(new GoldServicePlan());
         }
     }
 }

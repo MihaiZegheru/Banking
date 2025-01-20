@@ -8,10 +8,12 @@ import org.poo.banking.transaction.TransactionTable;
 import org.poo.banking.transaction.ZeroPaymentReceiver;
 import org.poo.banking.user.User;
 import org.poo.banking.user.account.Account;
+import org.poo.banking.user.account.exception.FrozenCardException;
 import org.poo.banking.user.account.exception.InsufficientFundsException;
 import org.poo.banking.user.card.Card;
 import org.poo.banking.user.tracking.TrackingNode;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public final class CashWithdrawalCommand extends BankingCommand {
@@ -44,7 +46,6 @@ public final class CashWithdrawalCommand extends BankingCommand {
         ObjectNode objectNode = objectMapper.createObjectNode();
         objectNode.put("command", command);
         objectNode.put("timestamp", timestamp);
-
         ObjectNode outputNode = objectMapper.createObjectNode();
 
         Optional<Card> cardResult = user.getCardByCardNumber(cardNumber);
@@ -56,40 +57,28 @@ public final class CashWithdrawalCommand extends BankingCommand {
         }
         Card card = cardResult.get();
 
-        TrackingNode.TrackingNodeBuilder senderTrackingBuilder =
+        TrackingNode.TrackingNodeBuilder trackingBuilder =
                 new TrackingNode.TrackingNodeBuilder()
                         .setTimestamp(timestamp)
                         .setProducer(card.getAccount());
-
-
-        TransactionTable transaction = new TransactionTable(card, new ZeroPaymentReceiver(), amount,
-                card.getAccount().getCurrency());
         try {
-            transaction.collect();
-//            user.getUserTracker().onTransaction(senderTrackingBuilder
-//                    .setAmountLiteral(amount + " " + card.getCurrency())
-//                    .setDescription(description)
-//                    .setSenderIban(iban)
-//                    .setReceiverIban(receiverIban)
-//                    .setTransferType("sent")
-//                    .setProducer(card)
-//                    .build());
-//
-//            ForexGenie genie = BankingManager.getInstance().getForexGenie();
-//            receiverUser.getUserTracker().onTransaction(receiverTrackingBuilder
-//                    .setAmountLiteral(
-//                            genie.queryRate(card.getCurrency(),
-//                                    receiverAccount.getCurrency(), amount) + " "
-//                                    + receiverAccount.getCurrency())
-//                    .setDescription(description)
-//                    .setSenderIban(iban)
-//                    .setReceiverIban(receiverIban)
-//                    .setTransferType("received")
-//                    .setProducer(receiverAccount)
-//                    .build());
+            Account account = card.getOwner();
+            ForexGenie forexGenie = BankingManager.getInstance().getForexGenie();
+            double newAmount = forexGenie.queryRate("RON", account.getCurrency(), amount);
+            if (newAmount > card.getOwner().getBalance()) {
+                throw new InsufficientFundsException("Insufficient funds");
+            }
+            account.setBalance(account.getBalance() - newAmount);
+            account.getOwningUser().getServicePlan().CollectCommission(amount, "RON", card);
+
+            user.getUserTracker().onCashWithdrawal(trackingBuilder
+                    .setAmount(amount)
+                    .setDescription("Cash withdrawal of " + amount)
+                    .setTimestamp(timestamp)
+                    .build());
         } catch (InsufficientFundsException e) {
-            senderTrackingBuilder.setDescription(e.getMessage());
-            user.getUserTracker().onTransaction(senderTrackingBuilder.build());
+            trackingBuilder.setDescription(e.getMessage());
+            user.getUserTracker().onTransaction(trackingBuilder.build());
         }
         return Optional.empty();
     }

@@ -7,7 +7,7 @@ public interface SavingsCollector {
     /**
      * Collect interest and add it to balance.
      */
-    void collect();
+    double collect();
 
     /**
      * Set the interest rate.

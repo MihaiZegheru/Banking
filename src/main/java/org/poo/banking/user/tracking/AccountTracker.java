@@ -11,4 +11,5 @@ interface AccountTracker {
     void onCardFrozen(TrackingNode trackingNode);
     void onInterestRateChanged(TrackingNode trackingNode);
     void onPlanUpgraded(TrackingNode trackingNode);
+    void onCashWithdrawal(final TrackingNode trackingNode);
 }

@@ -42,6 +42,9 @@ public final class PayOnlineCommand extends BankingCommand {
 
     @Override
     public Optional<ObjectNode> execute() {
+        if (amount == 0) {
+            return Optional.empty();
+        }
         BankingManager.getInstance().setTime(timestamp);
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode objectNode = objectMapper.createObjectNode();
@@ -90,7 +93,7 @@ public final class PayOnlineCommand extends BankingCommand {
             if (Objects.equals(seller.getCashbackStrategy(), "nrOfTransactions")) {
 //                account.setNumberOfTransactions(account.getNumberOfTransactions() + 1);
             } else if (Objects.equals(seller.getCashbackStrategy(), "spendingThreshold")) {
-                account.getServicePlan().HandleCashbackForSpending(convertedPaidAmount,
+                account.getOwningUser().getServicePlan().HandleCashbackForSpending(convertedPaidAmount,
                         account.getCurrency(), account);
             }
         } catch (InsufficientFundsException

@@ -122,4 +122,9 @@ public final class FlowTracker implements AccountTracker, TransactionTracker {
     public void onTransaction(final TrackingNode trackingNode) {
         history.add(trackingNode);
     }
+
+    @Override
+    public void onCashWithdrawal(final TrackingNode trackingNode) {
+        history.add(trackingNode);
+    }
 }

@@ -45,21 +45,15 @@ public abstract class Account implements SavingsCollector, PaymentCollectee,
     @Getter
     @Setter
     @JsonIgnore
-    protected ServicePlan servicePlan;
-
-    @Getter
-    @Setter
-    @JsonIgnore
     protected double spending;
 
     protected Account(final String type, final String iban, final String currency,
-                      final User owner, final ServicePlan servicePlan) {
+                      final User owner) {
         this.type = type;
         this.iban = iban;
         this.currency = currency;
         this.balance = 0;
         this.owningUser = owner;
-        this.servicePlan = servicePlan;
     }
 
     /**
